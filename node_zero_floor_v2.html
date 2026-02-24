@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NODE ZERO — Factory Floor Blueprint</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap');
+  :root{--bg:#030810;--grid:rgba(0,200,255,0.04);--grid2:rgba(0,200,255,0.08);--cyan:#00c8ff;--cyan-dim:rgba(0,200,255,0.15);--cyan-glow:rgba(0,200,255,0.4);--green:#39ff14;--orange:#ff6b00;--yellow:#ffd700;--red:#ff2244;--white:#e8f4f8;--muted:#4a6272;--panel:rgba(5,20,35,0.95);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;overflow-x:hidden;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid2) 1px,transparent 1px),linear-gradient(90deg,var(--grid2) 1px,transparent 1px),linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:100px 100px,100px 100px,20px 20px,20px 20px;pointer-events:none;z-index:0;}
+  header{position:relative;z-index:10;padding:20px 28px 14px;border-bottom:1px solid rgba(0,200,255,0.2);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(0,50,80,0.4) 0%,transparent 100%);}
+  .logo-block h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;letter-spacing:6px;color:var(--cyan);text-shadow:0 0 20px var(--cyan-glow);}
+  .logo-block .sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:3px;margin-top:2px;}
+  .header-stats{display:flex;gap:28px;}
+  .stat{text-align:right;}.stat .val{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;color:var(--cyan);}.stat .lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;}
+  .main{position:relative;z-index:5;display:grid;grid-template-columns:1fr 270px;gap:0;min-height:calc(100vh - 72px);}
+  .floor-wrap{padding:20px;overflow:auto;}
+  .floor-title{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:3px;margin-bottom:12px;display:flex;gap:20px;}.floor-title span{color:var(--cyan);}
+  .level-toggle{display:flex;gap:8px;margin-bottom:10px;}
+  .level-btn{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;padding:5px 14px;border:1px solid var(--muted);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+  .level-btn.active{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim);box-shadow:0 0 10px var(--cyan-glow);}
+  .blueprint{position:relative;width:100%;max-width:880px;background:rgba(0,15,30,0.8);border:1px solid rgba(0,200,255,0.3);box-shadow:0 0 40px rgba(0,200,255,0.05),inset 0 0 80px rgba(0,200,255,0.02);}
+  .blueprint svg{width:100%;height:auto;display:block;}
+  @keyframes scan{0%{top:-2px}100%{top:100%}}
+  .blueprint::after{content:'';position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,200,255,0.4),transparent);animation:scan 4s linear infinite;pointer-events:none;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+  .pulse{animation:pulse 2s ease-in-out infinite;}
+  .sidebar{border-left:1px solid rgba(0,200,255,0.15);background:var(--panel);overflow-y:auto;}
+  .sidebar-section{border-bottom:1px solid rgba(0,200,255,0.1);padding:14px;}
+  .sidebar-section h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:10px;}
+  .zone-item{display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer;transition:all 0.2s;border-bottom:1px solid rgba(255,255,255,0.03);}
+  .zone-item:hover{padding-left:4px;}.zone-item:hover .zone-name{color:var(--white);}
+  .zone-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+  .zone-name{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;color:var(--white);flex:1;}
+  .zone-sf{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);}
+  .detail-panel{padding:14px;border-bottom:1px solid rgba(0,200,255,0.1);min-height:130px;}
+  .detail-panel h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--cyan);margin-bottom:6px;}
+  .detail-panel p{font-size:11px;color:rgba(200,220,230,0.7);line-height:1.6;}
+  .equipment-list{margin-top:8px;}
+  .eq-item{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .eq-item::before{content:'▸  ';color:var(--cyan);}
+  .budget-line{margin-top:8px;padding:7px;background:rgba(0,200,255,0.05);border-left:2px solid var(--cyan);}
+  .budget-line .amount{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--green);}
+  .budget-line .blbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;}
+  .total-bar{padding:14px;background:linear-gradient(135deg,rgba(0,200,255,0.08),rgba(0,50,80,0.3));border-top:1px solid rgba(0,200,255,0.2);}
+  .total-bar .t-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);}
+  .total-bar .t-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:var(--cyan);text-shadow:0 0 15px var(--cyan-glow);line-height:1;margin-top:4px;}
+  .total-bar .t-range{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;}
+  .tooltip{position:fixed;background:rgba(5,25,45,0.97);border:1px solid var(--cyan);padding:7px 11px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan);pointer-events:none;display:none;z-index:100;box-shadow:0 0 20px rgba(0,200,255,0.3);letter-spacing:1px;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .fadeIn{animation:fadeIn 0.3s ease;}
+  #mezz-overlay{display:none;}
+  #mezz-overlay.active{display:block;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-block">
+    <h1>RANE DYNAMICS</h1>
+    <div class="sub">NODE ZERO — DOYLE, CA 96109 — APN 139-340-010 — SOVEREIGN NODE BLUEPRINT</div>
+  </div>
+  <div class="header-stats">
+    <div class="stat"><div class="val">2,000</div><div class="lbl">SHOP SQ FT</div></div>
+    <div class="stat"><div class="val">+2,000</div><div class="lbl">MEZZANINE</div></div>
+    <div class="stat"><div class="val">$6.1M</div><div class="lbl">NODE BUDGET</div></div>
+  </div>
+</header>
+<div class="main">
+  <div class="floor-wrap">
+    <div class="floor-title"><span>FLOOR PLAN // GROUND LEVEL</span> DOC-NZ-001 &nbsp;|&nbsp; REV B &nbsp;|&nbsp; FEB 2026 &nbsp;|&nbsp; SCALE 1"=16'</div>
+    <div class="level-toggle">
+      <button class="level-btn active" onclick="showLevel('ground',this)">L1 — GROUND FLOOR</button>
+      <button class="level-btn" onclick="showLevel('mezz',this)">L2 — MEZZANINE (OFFICE + SERVERS)</button>
+    </div>
+    <div class="blueprint">
+      <svg viewBox="0 0 880 580" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="rgba(0,200,255,0.5)"/></marker>
+          <marker id="arrG" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="rgba(57,255,20,0.5)"/></marker>
+        </defs>
+
+        <!-- OUTER SHELL -->
+        <rect x="18" y="18" width="844" height="544" fill="none" stroke="#00c8ff" stroke-width="2.5" filter="url(#glow)"/>
+
+        <!-- ============ ZONE A: RDF-2 (top-left) ============ -->
+        <rect x="18" y="18" width="230" height="210" fill="rgba(0,200,255,0.04)" stroke="#00c8ff" stroke-width="1.5" data-zone="rdf2" class="zone-rect" style="cursor:pointer"/>
+        <text x="26" y="34" fill="rgba(0,200,255,0.4)" font-family="'Share Tech Mono'" font-size="8" letter-spacing="2">ZONE A</text>
+        <!-- Machine body 8x20ft -->
+        <rect x="36" y="40" width="90" height="155" fill="rgba(0,200,255,0.1)" stroke="#00c8ff" stroke-width="1" rx="3" data-zone="rdf2" class="zone-rect" style="cursor:pointer"/>
+        <!-- 8 heads -->
+        <circle cx="60" cy="65" r="5" fill="#00c8ff" opacity="0.8" class="pulse" style="animation-delay:0s"/>
+        <circle cx="84" cy="65" r="5" fill="#00c8ff" opacity="0.8" class="pulse" style="animation-delay:0.3s"/>
+        <circle cx="108" cy="65" r="5" fill="#00c8ff" opacity="0.8" class="pulse" style="animation-delay:0.6s"/>
+        <circle cx="60" cy="105" r="5" fill="#00c8ff" opacity="0.8" class="pulse" style="animation-delay:0.9s"/>
+        <circle cx="84" cy="105" r="5" fill="#00c8ff" opacity="0.8" class="pulse" style="animation-delay:1.2s"/>
+        <circle cx="108" cy="105" r="5" fill="#00c8ff" opacity="0.8" class="pulse" style="animation-delay:1.5s"/>
+        <circle cx="60" cy="145" r="5" fill="#00c8ff" opacity="0.8" class="pulse" style="animation-delay:1.8s"/>
+        <circle cx="84" cy="145" r="5" fill="#00c8ff" opacity="0.8" class="pulse" style="animation-delay:2.1s"/>
+        <!-- Labels -->
+        <text x="142" y="75" fill="#00c8ff" font-family="'Barlow Condensed'" font-weight="700" font-size="14" letter-spacing="2">RDF-2</text>
+        <text x="142" y="91" fill="#00c8ff" font-family="'Barlow Condensed'" font-size="10">OCTO-NEXUS</text>
+        <text x="142" y="107" fill="rgba(0,200,255,0.5)" font-family="'Share Tech Mono'" font-size="9">8 HEADS</text>
+        <text x="142" y="121" fill="rgba(0,200,255,0.5)" font-family="'Share Tech Mono'" font-size="9">160 SQ FT</text>
+        <text x="142" y="135" fill="rgba(100,220,100,0.7)" font-family="'Share Tech Mono'" font-size="9">$4.0M</text>
+        <!-- overhead feed -->
+        <line x1="36" y1="30" x2="126" y2="30" stroke="#00c8ff" stroke-width="2" stroke-dasharray="4,3" opacity="0.4"/>
+        <text x="30" y="28" fill="rgba(0,200,255,0.3)" font-family="'Share Tech Mono'" font-size="7">FEED</text>
+
+        <!-- ============ ZONE B: MINI-FORGE (mid-left) ============ -->
+        <rect x="18" y="228" width="230" height="200" fill="rgba(57,255,20,0.03)" stroke="#39ff14" stroke-width="1.5" data-zone="miniforge" class="zone-rect" style="cursor:pointer"/>
+        <text x="26" y="244" fill="rgba(57,255,20,0.4)" font-family="'Share Tech Mono'" font-size="8" letter-spacing="2">ZONE B</text>
+        <!-- Overhead pellet pipe -->
+        <line x1="36" y1="238" x2="238" y2="238" stroke="#39ff14" stroke-width="3" stroke-dasharray="5,3" opacity="0.5"/>
+        <text x="40" y="236" fill="rgba(57,255,20,0.35)" font-family="'Share Tech Mono'" font-size="7">PNEUMATIC PELLET LINE</text>
+        <!-- Pod rack -->
+        <rect x="36" y="248" width="195" height="38" fill="rgba(57,255,20,0.06)" stroke="#39ff14" stroke-width="1" rx="2"/>
+        <g fill="rgba(57,255,20,0.15)" stroke="#39ff14" stroke-width="0.5">
+          <rect x="40" y="252" width="18" height="30" rx="1"/>
+          <rect x="62" y="252" width="18" height="30" rx="1"/>
+          <rect x="84" y="252" width="18" height="30" rx="1"/>
+          <rect x="106" y="252" width="18" height="30" rx="1"/>
+          <rect x="128" y="252" width="18" height="30" rx="1"/>
+          <rect x="150" y="252" width="18" height="30" rx="1"/>
+          <rect x="172" y="252" width="18" height="30" rx="1"/>
+          <rect x="194" y="252" width="18" height="30" rx="1"/>
+        </g>
+        <!-- 500lb tank -->
+        <ellipse cx="58" cy="340" rx="24" ry="34" fill="rgba(57,255,20,0.08)" stroke="#39ff14" stroke-width="1"/>
+        <text x="46" y="337" fill="#39ff14" font-family="'Share Tech Mono'" font-size="8">500LB</text>
+        <text x="46" y="349" fill="#39ff14" font-family="'Share Tech Mono'" font-size="8">TANK</text>
+        <!-- Digit path -->
+        <path d="M105,296 L105,395 L200,395" fill="none" stroke="rgba(57,255,20,0.2)" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrG)"/>
+        <circle cx="105" cy="370" r="9" fill="rgba(57,255,20,0.15)" stroke="#39ff14" stroke-width="1"/>
+        <text x="99" y="374" fill="#39ff14" font-family="'Share Tech Mono'" font-size="8">DGT</text>
+        <!-- Labels -->
+        <text x="150" y="320" fill="#39ff14" font-family="'Barlow Condensed'" font-weight="700" font-size="13" letter-spacing="2">MINI-FORGE</text>
+        <text x="150" y="335" fill="#39ff14" font-family="'Barlow Condensed'" font-size="10">4–40 PODS</text>
+        <text x="150" y="350" fill="rgba(57,255,20,0.5)" font-family="'Share Tech Mono'" font-size="9">~300 SQ FT</text>
+        <text x="150" y="365" fill="rgba(100,220,100,0.7)" font-family="'Share Tech Mono'" font-size="9">$280-420K</text>
+
+        <!-- ============ ZONE E: ASSEMBLY STAGING (bottom-left) ============ -->
+        <rect x="18" y="428" width="230" height="134" fill="rgba(255,215,0,0.03)" stroke="#ffd700" stroke-width="1" stroke-dasharray="6,3"/>
+        <text x="26" y="444" fill="rgba(255,215,0,0.4)" font-family="'Share Tech Mono'" font-size="8" letter-spacing="2">ZONE E — ASSEMBLY STAGING</text>
+        <g fill="rgba(255,215,0,0.08)" stroke="#ffd700" stroke-width="0.8">
+          <rect x="30" y="452" width="32" height="32" rx="2"/>
+          <rect x="68" y="452" width="32" height="32" rx="2"/>
+          <rect x="106" y="452" width="32" height="32" rx="2"/>
+          <rect x="144" y="452" width="32" height="32" rx="2"/>
+          <rect x="182" y="452" width="32" height="32" rx="2"/>
+          <rect x="30" y="492" width="32" height="32" rx="2"/>
+          <rect x="68" y="492" width="32" height="32" rx="2"/>
+          <rect x="106" y="492" width="32" height="32" rx="2"/>
+          <rect x="144" y="492" width="32" height="32" rx="2"/>
+          <rect x="182" y="492" width="32" height="32" rx="2"/>
+        </g>
+
+        <!-- ============ MAIN AISLE (vertical divider) ============ -->
+        <line x1="248" y1="18" x2="248" y2="562" stroke="rgba(0,200,255,0.15)" stroke-width="1" stroke-dasharray="6,4"/>
+
+        <!-- ============ ZONE C: MACHINE SHOP (center) ============ -->
+        <rect x="248" y="18" width="420" height="380" fill="rgba(255,107,0,0.03)" stroke="#ff6b00" stroke-width="1.5" data-zone="machineshop" class="zone-rect" style="cursor:pointer"/>
+        <text x="258" y="34" fill="rgba(255,107,0,0.4)" font-family="'Share Tech Mono'" font-size="8" letter-spacing="2">ZONE C — MACHINE SHOP</text>
+
+        <!-- MACHINING sub-zone -->
+        <line x1="248" y1="145" x2="668" y2="145" stroke="rgba(255,107,0,0.25)" stroke-width="1" stroke-dasharray="6,3"/>
+        <text x="258" y="57" fill="rgba(255,107,0,0.3)" font-family="'Share Tech Mono'" font-size="7" letter-spacing="2">MACHINING CELL</text>
+        <!-- Haas VMC -->
+        <rect x="262" y="42" width="90" height="78" fill="rgba(255,107,0,0.12)" stroke="#ff6b00" stroke-width="1" rx="3"/>
+        <text x="267" y="72" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">HAAS</text>
+        <text x="267" y="85" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">VF-4SS</text>
+        <circle cx="333" cy="68" r="6" fill="rgba(255,107,0,0.25)" stroke="#ff6b00" stroke-width="0.8"/>
+        <!-- Haas Lathe -->
+        <rect x="368" y="42" width="90" height="78" fill="rgba(255,107,0,0.12)" stroke="#ff6b00" stroke-width="1" rx="3"/>
+        <text x="373" y="72" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">HAAS</text>
+        <text x="373" y="85" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">ST-25Y</text>
+        <!-- Gear Hobber -->
+        <rect x="474" y="42" width="80" height="78" fill="rgba(255,107,0,0.12)" stroke="#ff6b00" stroke-width="1" rx="3"/>
+        <text x="479" y="72" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">GEAR</text>
+        <text x="479" y="85" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">HOBBER</text>
+        <!-- Tube Bender -->
+        <rect x="566" y="42" width="86" height="78" fill="rgba(255,107,0,0.07)" stroke="#ff6b00" stroke-width="1" stroke-dasharray="4,2" rx="3"/>
+        <text x="571" y="75" fill="rgba(255,107,0,0.55)" font-family="'Share Tech Mono'" font-size="8">CNC TUBE</text>
+        <text x="571" y="88" fill="rgba(255,107,0,0.55)" font-family="'Share Tech Mono'" font-size="8">BENDER</text>
+
+        <!-- METALLURGY sub-zone -->
+        <text x="258" y="162" fill="rgba(255,107,0,0.3)" font-family="'Share Tech Mono'" font-size="7" letter-spacing="2">METALLURGY LAB</text>
+        <line x1="248" y1="260" x2="668" y2="260" stroke="rgba(255,107,0,0.25)" stroke-width="1" stroke-dasharray="6,3"/>
+        <rect x="262" y="170" width="96" height="70" fill="rgba(255,107,0,0.14)" stroke="#ff6b00" stroke-width="1.5" rx="3"/>
+        <text x="268" y="198" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">ATMO</text>
+        <text x="268" y="211" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">FURNACE</text>
+        <!-- heat waves -->
+        <path d="M268,230 Q273,235 278,230 Q283,225 288,230 Q293,235 298,230 Q303,225 308,230 Q313,235 318,230" fill="none" stroke="rgba(255,107,0,0.35)" stroke-width="1"/>
+        <rect x="374" y="170" width="85" height="70" fill="rgba(0,120,255,0.1)" stroke="#0096ff" stroke-width="1" rx="3"/>
+        <text x="379" y="200" fill="#0096ff" font-family="'Share Tech Mono'" font-size="9">QUENCH</text>
+        <text x="379" y="213" fill="#0096ff" font-family="'Share Tech Mono'" font-size="9">TANK</text>
+        <circle cx="520" cy="205" r="34" fill="rgba(255,107,0,0.05)" stroke="#ff6b00" stroke-width="1"/>
+        <text x="500" y="202" fill="rgba(255,107,0,0.55)" font-family="'Share Tech Mono'" font-size="8">VIBRO</text>
+        <text x="498" y="214" fill="rgba(255,107,0,0.55)" font-family="'Share Tech Mono'" font-size="8">TUMBLER</text>
+
+        <!-- SMT ELECTRONICS sub-zone -->
+        <text x="258" y="276" fill="rgba(255,107,0,0.3)" font-family="'Share Tech Mono'" font-size="7" letter-spacing="2">SMT ELECTRONICS LINE</text>
+        <rect x="262" y="284" width="95" height="58" fill="rgba(255,107,0,0.1)" stroke="#ff6b00" stroke-width="1" rx="2"/>
+        <text x="268" y="308" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">PICK &amp;</text>
+        <text x="268" y="321" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">PLACE</text>
+        <rect x="374" y="284" width="95" height="58" fill="rgba(255,107,0,0.1)" stroke="#ff6b00" stroke-width="1" rx="2"/>
+        <text x="379" y="308" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">REFLOW</text>
+        <text x="379" y="321" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">OVEN</text>
+        <rect x="484" y="284" width="95" height="58" fill="rgba(255,107,0,0.1)" stroke="#ff6b00" stroke-width="1" rx="2"/>
+        <text x="489" y="308" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">WHEEL</text>
+        <text x="489" y="321" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="9">LACING</text>
+        <!-- ESD clean room border -->
+        <rect x="598" y="145" width="50" height="197" fill="rgba(255,107,0,0.04)" stroke="#ff6b00" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="602" y="236" fill="rgba(255,107,0,0.4)" font-family="'Share Tech Mono'" font-size="7" transform="rotate(-90,602,236)">ESD CLEAN ROOM</text>
+        <!-- Budget -->
+        <text x="258" y="365" fill="rgba(100,220,100,0.7)" font-family="'Share Tech Mono'" font-size="9">$1.65–2.05M</text>
+
+        <!-- ============ ZONE D: ENERGY + OZ (right column) ============ -->
+        <rect x="668" y="18" width="194" height="380" fill="rgba(255,34,68,0.03)" stroke="#ff2244" stroke-width="1.5" data-zone="energy" class="zone-rect" style="cursor:pointer"/>
+        <text x="676" y="34" fill="rgba(255,34,68,0.4)" font-family="'Share Tech Mono'" font-size="8" letter-spacing="2">ZONE D</text>
+        <!-- Solar array -->
+        <rect x="678" y="42" width="168" height="56" fill="rgba(255,34,68,0.08)" stroke="#ff2244" stroke-width="1" rx="3"/>
+        <text x="683" y="62" fill="#ff2244" font-family="'Share Tech Mono'" font-size="9">75kW SOLAR</text>
+        <text x="683" y="75" fill="rgba(255,34,68,0.55)" font-family="'Share Tech Mono'" font-size="8">188 PANELS // ROOFTOP</text>
+        <g fill="rgba(255,34,68,0.12)" stroke="#ff2244" stroke-width="0.5">
+          <rect x="683" y="46" width="14" height="9"/><rect x="700" y="46" width="14" height="9"/><rect x="717" y="46" width="14" height="9"/>
+          <rect x="734" y="46" width="14" height="9"/><rect x="751" y="46" width="14" height="9"/><rect x="768" y="46" width="14" height="9"/>
+          <rect x="785" y="46" width="14" height="9"/><rect x="802" y="46" width="14" height="9"/>
+        </g>
+        <!-- Powerwall stack -->
+        <rect x="678" y="112" width="168" height="96" fill="rgba(255,34,68,0.07)" stroke="#ff2244" stroke-width="1" rx="3"/>
+        <text x="683" y="130" fill="#ff2244" font-family="'Share Tech Mono'" font-size="9">225kWh BATTERY</text>
+        <text x="683" y="143" fill="rgba(255,34,68,0.55)" font-family="'Share Tech Mono'" font-size="8">16-17 POWERWALL 3</text>
+        <g fill="rgba(255,34,68,0.1)" stroke="#ff2244" stroke-width="0.5">
+          <rect x="683" y="150" width="18" height="48" rx="1"/><rect x="704" y="150" width="18" height="48" rx="1"/>
+          <rect x="725" y="150" width="18" height="48" rx="1"/><rect x="746" y="150" width="18" height="48" rx="1"/>
+          <rect x="767" y="150" width="18" height="48" rx="1"/><rect x="788" y="150" width="18" height="48" rx="1"/>
+          <rect x="809" y="150" width="18" height="48" rx="1"/>
+        </g>
+        <!-- Oz node -->
+        <rect x="678" y="222" width="168" height="78" fill="rgba(0,200,255,0.06)" stroke="#00c8ff" stroke-width="1" stroke-dasharray="5,3" rx="3"/>
+        <text x="683" y="246" fill="#00c8ff" font-family="'Share Tech Mono'" font-size="9">OZ NODE</text>
+        <text x="683" y="259" fill="rgba(0,200,255,0.5)" font-family="'Share Tech Mono'" font-size="8">ORCHESTRATION LAYER</text>
+        <text x="683" y="272" fill="rgba(0,200,255,0.4)" font-family="'Share Tech Mono'" font-size="8">NVIDIA BLACKWELL</text>
+        <circle cx="828" cy="240" r="5" fill="#00c8ff" class="pulse" filter="url(#glow)"/>
+        <!-- 480V + HVAC -->
+        <rect x="678" y="316" width="78" height="52" fill="rgba(255,34,68,0.07)" stroke="#ff2244" stroke-width="1" rx="2"/>
+        <text x="683" y="338" fill="#ff2244" font-family="'Share Tech Mono'" font-size="8">480V 3PH</text>
+        <text x="683" y="350" fill="rgba(255,34,68,0.5)" font-family="'Share Tech Mono'" font-size="8">MAIN PANEL</text>
+        <rect x="762" y="316" width="78" height="52" fill="rgba(100,150,255,0.05)" stroke="#6496ff" stroke-width="1" rx="2"/>
+        <text x="767" y="338" fill="#6496ff" font-family="'Share Tech Mono'" font-size="8">HVAC /</text>
+        <text x="767" y="350" fill="#6496ff" font-family="'Share Tech Mono'" font-size="8">EXHAUST</text>
+        <!-- Budget -->
+        <text x="676" y="385" fill="rgba(100,220,100,0.7)" font-family="'Share Tech Mono'" font-size="9">$180–215K</text>
+
+        <!-- ============ ZONE F: VEHICLE INTEGRATION + SHIPPING ============ -->
+        <rect x="248" y="398" width="614" height="164" fill="rgba(150,100,255,0.03)" stroke="rgba(150,100,255,0.35)" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="258" y="414" fill="rgba(150,100,255,0.4)" font-family="'Share Tech Mono'" font-size="8" letter-spacing="2">ZONE F — VEHICLE INTEGRATION + SHIPPING</text>
+        <!-- Bays -->
+        <rect x="262" y="422" width="150" height="100" fill="rgba(150,100,255,0.06)" stroke="rgba(150,100,255,0.3)" stroke-width="1" rx="3"/>
+        <text x="312" y="476" fill="rgba(150,100,255,0.7)" font-family="'Barlow Condensed'" font-weight="700" font-size="13" text-anchor="middle">BAY 1</text>
+        <rect x="428" y="422" width="150" height="100" fill="rgba(150,100,255,0.06)" stroke="rgba(150,100,255,0.3)" stroke-width="1" rx="3"/>
+        <text x="503" y="476" fill="rgba(150,100,255,0.7)" font-family="'Barlow Condensed'" font-weight="700" font-size="13" text-anchor="middle">BAY 2</text>
+        <!-- Loading dock -->
+        <rect x="594" y="422" width="155" height="100" fill="rgba(150,100,255,0.04)" stroke="rgba(150,100,255,0.2)" stroke-width="1" stroke-dasharray="4,3" rx="3"/>
+        <text x="672" y="470" fill="rgba(150,100,255,0.5)" font-family="'Barlow Condensed'" font-weight="600" font-size="12" text-anchor="middle">LOADING</text>
+        <text x="672" y="486" fill="rgba(150,100,255,0.5)" font-family="'Barlow Condensed'" font-size="10" text-anchor="middle">DOCK</text>
+        <line x1="594" y1="522" x2="749" y2="522" stroke="rgba(150,100,255,0.5)" stroke-width="4"/>
+        <text x="672" y="540" fill="rgba(150,100,255,0.3)" font-family="'Share Tech Mono'" font-size="8" text-anchor="middle">ROLL-UP DOOR</text>
+        <!-- Flow arrow into integration -->
+        <path d="M248,480 L268,480" stroke="rgba(150,100,255,0.4)" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- ============ MEZZANINE OVERLAY ============ -->
+        <g id="mezz-overlay">
+          <rect x="248" y="18" width="614" height="195" fill="rgba(255,215,0,0.08)" stroke="#ffd700" stroke-width="2" stroke-dasharray="8,4" rx="3"/>
+          <text x="260" y="46" fill="#ffd700" font-family="'Barlow Condensed'" font-weight="900" font-size="16" letter-spacing="4">MEZZANINE — LEVEL 2</text>
+          <text x="260" y="62" fill="rgba(255,215,0,0.55)" font-family="'Share Tech Mono'" font-size="8">~2,000 SQ FT — OFFICE + SERVER ROOM — MAXIMIZES VERTICAL SPACE</text>
+          <!-- Server room -->
+          <rect x="260" y="75" width="220" height="118" fill="rgba(0,200,255,0.1)" stroke="#00c8ff" stroke-width="1.5" rx="3"/>
+          <text x="270" y="100" fill="#00c8ff" font-family="'Barlow Condensed'" font-weight="700" font-size="14">SERVER ROOM</text>
+          <text x="270" y="115" fill="rgba(0,200,255,0.55)" font-family="'Share Tech Mono'" font-size="8">NVIDIA BLACKWELL CLUSTER</text>
+          <text x="270" y="128" fill="rgba(0,200,255,0.4)" font-family="'Share Tech Mono'" font-size="8">RAISED FLOOR // ESD PROTECTION</text>
+          <text x="270" y="141" fill="rgba(0,200,255,0.4)" font-family="'Share Tech Mono'" font-size="8">PRECISION HVAC // HALON SUPPRESSION</text>
+          <g fill="rgba(0,200,255,0.12)" stroke="#00c8ff" stroke-width="0.5">
+            <rect x="390" y="80" width="16" height="108" rx="2"/>
+            <rect x="410" y="80" width="16" height="108" rx="2"/>
+            <rect x="430" y="80" width="16" height="108" rx="2"/>
+            <rect x="450" y="80" width="16" height="108" rx="2"/>
+          </g>
+          <!-- Operations HQ -->
+          <rect x="496" y="75" width="220" height="118" fill="rgba(57,255,20,0.07)" stroke="#39ff14" stroke-width="1.5" rx="3"/>
+          <text x="506" y="100" fill="#39ff14" font-family="'Barlow Condensed'" font-weight="700" font-size="14">OPERATIONS HQ</text>
+          <text x="506" y="115" fill="rgba(57,255,20,0.55)" font-family="'Share Tech Mono'" font-size="8">NODE OPERATOR OFFICE</text>
+          <text x="506" y="128" fill="rgba(57,255,20,0.4)" font-family="'Share Tech Mono'" font-size="8">AURA DASHBOARD // OZ MONITOR</text>
+          <text x="506" y="141" fill="rgba(57,255,20,0.4)" font-family="'Share Tech Mono'" font-size="8">CONFERENCE // COMMS</text>
+          <!-- Staircase -->
+          <rect x="732" y="75" width="55" height="118" fill="rgba(255,215,0,0.07)" stroke="#ffd700" stroke-width="1" rx="2"/>
+          <g stroke="rgba(255,215,0,0.25)" stroke-width="0.5">
+            <line x1="732" y1="87" x2="787" y2="87"/><line x1="732" y1="99" x2="787" y2="99"/>
+            <line x1="732" y1="111" x2="787" y2="111"/><line x1="732" y1="123" x2="787" y2="123"/>
+            <line x1="732" y1="135" x2="787" y2="135"/><line x1="732" y1="147" x2="787" y2="147"/>
+            <line x1="732" y1="159" x2="787" y2="159"/><line x1="732" y1="171" x2="787" y2="171"/>
+          </g>
+          <text x="748" y="133" fill="#ffd700" font-family="'Share Tech Mono'" font-size="8">STAIR</text>
+          <!-- Loft -->
+          <rect x="800" y="75" width="60" height="118" fill="rgba(255,215,0,0.05)" stroke="#ffd700" stroke-width="1" stroke-dasharray="3,3" rx="2"/>
+          <text x="810" y="128" fill="rgba(255,215,0,0.4)" font-family="'Share Tech Mono'" font-size="8">LOFT</text>
+          <text x="806" y="141" fill="rgba(255,215,0,0.4)" font-family="'Share Tech Mono'" font-size="8">STORE</text>
+        </g>
+
+        <!-- DIMENSIONS -->
+        <line x1="18" y1="572" x2="862" y2="572" stroke="rgba(0,200,255,0.25)" stroke-width="1"/>
+        <line x1="18" y1="567" x2="18" y2="577" stroke="rgba(0,200,255,0.25)" stroke-width="1"/>
+        <line x1="862" y1="567" x2="862" y2="577" stroke="rgba(0,200,255,0.25)" stroke-width="1"/>
+        <text x="440" y="576" fill="rgba(0,200,255,0.35)" font-family="'Share Tech Mono'" font-size="8" text-anchor="middle">100' — 0"</text>
+        <!-- Scale -->
+        <g transform="translate(26,552)">
+          <line x1="0" y1="0" x2="56" y2="0" stroke="rgba(0,200,255,0.35)" stroke-width="1.5"/>
+          <line x1="0" y1="-4" x2="0" y2="4" stroke="rgba(0,200,255,0.35)" stroke-width="1"/>
+          <line x1="28" y1="-2" x2="28" y2="2" stroke="rgba(0,200,255,0.35)" stroke-width="1"/>
+          <line x1="56" y1="-4" x2="56" y2="4" stroke="rgba(0,200,255,0.35)" stroke-width="1"/>
+          <text x="0" y="13" fill="rgba(0,200,255,0.35)" font-family="'Share Tech Mono'" font-size="8">0</text>
+          <text x="22" y="13" fill="rgba(0,200,255,0.35)" font-family="'Share Tech Mono'" font-size="8">20'</text>
+          <text x="46" y="13" fill="rgba(0,200,255,0.35)" font-family="'Share Tech Mono'" font-size="8">40'</text>
+        </g>
+        <!-- North arrow -->
+        <g transform="translate(842,548)">
+          <circle cx="0" cy="0" r="16" fill="none" stroke="rgba(0,200,255,0.25)" stroke-width="1"/>
+          <path d="M0,-14 L3.5,0 L0,5 L-3.5,0 Z" fill="rgba(0,200,255,0.55)"/>
+          <path d="M0,14 L3.5,0 L0,-5 L-3.5,0 Z" fill="rgba(0,200,255,0.15)"/>
+          <text x="-3" y="-4" fill="#00c8ff" font-family="'Share Tech Mono'" font-size="8" font-weight="bold">N</text>
+        </g>
+      </svg>
+    </div>
+    <!-- Legend -->
+    <div style="display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono';font-size:9px;color:rgba(200,220,230,0.4);"><div style="width:10px;height:10px;background:rgba(0,200,255,0.2);border:1px solid #00c8ff;"></div>RDF-2</div>
+      <div style="display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono';font-size:9px;color:rgba(200,220,230,0.4);"><div style="width:10px;height:10px;background:rgba(57,255,20,0.15);border:1px solid #39ff14;"></div>MINI-FORGE</div>
+      <div style="display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono';font-size:9px;color:rgba(200,220,230,0.4);"><div style="width:10px;height:10px;background:rgba(255,107,0,0.15);border:1px solid #ff6b00;"></div>MACHINE SHOP</div>
+      <div style="display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono';font-size:9px;color:rgba(200,220,230,0.4);"><div style="width:10px;height:10px;background:rgba(255,34,68,0.15);border:1px solid #ff2244;"></div>ENERGY / OZ</div>
+      <div style="display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono';font-size:9px;color:rgba(200,220,230,0.4);"><div style="width:10px;height:10px;background:rgba(255,215,0,0.1);border:1px dashed #ffd700;"></div>ASSEMBLY</div>
+      <div style="display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono';font-size:9px;color:rgba(200,220,230,0.4);"><div style="width:10px;height:10px;background:rgba(150,100,255,0.1);border:1px dashed rgba(150,100,255,0.6);"></div>INTEGRATION/SHIP</div>
+      <div style="display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono';font-size:9px;color:rgba(200,220,230,0.4);"><div style="width:10px;height:10px;background:rgba(255,215,0,0.08);border:2px dashed #ffd700;"></div>MEZZANINE L2</div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <h3>ZONE MANIFEST</h3>
+      <div class="zone-item" onclick="showDetail('rdf2')"><div class="zone-dot" style="background:#00c8ff;box-shadow:0 0 6px #00c8ff;"></div><div class="zone-name">A — RDF-2 OCTO-NEXUS</div><div class="zone-sf">~300 sf</div></div>
+      <div class="zone-item" onclick="showDetail('miniforge')"><div class="zone-dot" style="background:#39ff14;box-shadow:0 0 6px #39ff14;"></div><div class="zone-name">B — MINI-FORGE BANK</div><div class="zone-sf">~300 sf</div></div>
+      <div class="zone-item" onclick="showDetail('machineshop')"><div class="zone-dot" style="background:#ff6b00;box-shadow:0 0 6px #ff6b00;"></div><div class="zone-name">C — MACHINE SHOP</div><div class="zone-sf">~800 sf</div></div>
+      <div class="zone-item" onclick="showDetail('energy')"><div class="zone-dot" style="background:#ff2244;box-shadow:0 0 6px #ff2244;"></div><div class="zone-name">D — ENERGY / OZ NODE</div><div class="zone-sf">~400 sf</div></div>
+      <div class="zone-item" onclick="showDetail('assembly')"><div class="zone-dot" style="background:#ffd700;box-shadow:0 0 6px #ffd700;"></div><div class="zone-name">E — ASSEMBLY STAGING</div><div class="zone-sf">~300 sf</div></div>
+      <div class="zone-item" onclick="showDetail('shipping')"><div class="zone-dot" style="background:rgba(150,100,255,0.9);box-shadow:0 0 6px rgba(150,100,255,0.8);"></div><div class="zone-name">F — INTEGRATION / SHIP</div><div class="zone-sf">~400 sf</div></div>
+      <div class="zone-item" onclick="showDetail('mezz')"><div class="zone-dot" style="background:transparent;border:1px dashed #ffd700;"></div><div class="zone-name">L2 — MEZZANINE</div><div class="zone-sf">~2,000 sf</div></div>
+    </div>
+    <div class="detail-panel" id="detail-panel">
+      <h4 id="detail-title" style="color:#00c8ff">SELECT A ZONE</h4>
+      <p id="detail-desc" style="color:rgba(0,200,255,0.4);font-family:'Share Tech Mono';font-size:9px;">Click any zone or item in the manifest.</p>
+      <div class="equipment-list" id="detail-equip"></div>
+      <div id="detail-budget"></div>
+    </div>
+    <div class="sidebar-section">
+      <h3>NODE SPECIFICATIONS</h3>
+      <div style="font-family:'Share Tech Mono';font-size:9px;color:var(--muted);line-height:1.9;">
+        <div>SITE &nbsp;&nbsp;&nbsp;&nbsp; 2.87 ACRES</div>
+        <div>STRUCT &nbsp;&nbsp; BARNDOMINIUM</div>
+        <div>SHOP &nbsp;&nbsp;&nbsp;&nbsp; 2,000 SQ FT</div>
+        <div>LIVING &nbsp;&nbsp; 1,500 SQ FT</div>
+        <div>MEZZ &nbsp;&nbsp;&nbsp;&nbsp; ~2,000 SQ FT</div>
+        <div>POWER &nbsp;&nbsp;&nbsp; 480V 3-PHASE</div>
+        <div>SOLAR &nbsp;&nbsp;&nbsp; 75kW / 225kWh</div>
+        <div>ZONING &nbsp;&nbsp; A-1 AGRICULTURAL</div>
+        <div>APN &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 139-340-010</div>
+        <div>LOCATION &nbsp; DOYLE, CA 96109</div>
+      </div>
+    </div>
+    <div class="total-bar">
+      <div class="t-lbl">NODE ZERO TOTAL BUDGET</div>
+      <div class="t-val">$6.1M–$6.7M</div>
+      <div class="t-range">FULLY LOADED // LIGHTS-OUT OPERATION</div>
+    </div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+<script>
+const zoneData={
+  rdf2:{title:'RDF-2 OCTO-NEXUS',color:'#00c8ff',desc:'The Physical Compiler. 8-head synchronous gantry driven by NVIDIA Blackwell real-time physics simulation. Zero-latency Script switching — EV chassis to drone frame by downloading a new CAD file. 10,000 generations simulated before first atom moves.',equipment:['8-Head Synchronous Gantry','Blackwell EI Real-Time Physics','12-16 kg/hr Material Throughput','CF-Nylon / Aluminum Composites','Zero-Latency Script Retooling','160 sq ft Footprint','Overhead Material Feed'],budget:'$4,000,000'},
+  miniforge:{title:'MINI-FORGE BANK',color:'#39ff14',desc:'Modular small-parts production. 4 to 40 pods on 8040 extrusion rack. Pneumatic central feed. Digit EI sorting. Double capacity in 48 hours — splice into the overhead pipe. Expansion is just gantries and motors.',equipment:['4–40 Print Pods (CoreXY)','500lb Pneumatic Master Tank','Overhead Solenoid Manifold','Digit Humanoid Sorter','Stainless Belt Conveyor','Centralized Collection Trough','Aura Vision Parts ID'],budget:'$280,000–$420,000'},
+  machineshop:{title:'MACHINE SHOP & R&D',color:'#ff6b00',desc:"Propulsion, wheel, and electronics manufacturing. Vertical integration moat. Bug in controller logic? Rev B part is on the bike in 24 hours, not 6 weeks. By owning the SMT line and Gear Lab we eliminate the two biggest lead-time killers in EV manufacturing.",equipment:['Haas VF-4SS VMC (4th Axis)','Haas ST-25Y CNC Lathe','Universal Gear Hobber','CNC Mandrel Tube Bender','Atmosphere Furnace (Carburizing)','Automated Quench Tank','Vibratory Tumbler','SMT Pick-and-Place','Reflow Oven','Robotic Wheel Lacing'],budget:'$1,650,000–$2,050,000'},
+  energy:{title:'SOLAR + ENERGY SOVEREIGNTY',color:'#ff2244',desc:'Nodes never go dark. Energy sovereignty is operational sovereignty. Oz monitors grid state and battery level. Smart load shedding prioritizes RDF-2 and CNC over lights. 0.5-year payback period. 20-year ROI: $6.7M per node.',equipment:['75kW Rooftop Solar (188 panels)','225kWh Battery Backup','16-17 Tesla Powerwall 3','480V 3-Phase Main Panel','Oz Grid State Monitor','Industrial HVAC + Exhaust','Fire Suppression (Halon)'],budget:'$180,000–$215,000'},
+  assembly:{title:'ASSEMBLY + STAGING',color:'#ffd700',desc:'Parts from Mini-Forge sorted by Digit into labeled Assembly Bins. Wheel assemblies, controller boards, and frame components staged for vehicle integration. Aura vision system tracks inventory in real time.',equipment:['Assembly Bin Grid (10+ bins)','Digit Sort Delivery Path','Aura Parts Inventory Tracking','Quality Check Station'],budget:'(included in Mini-Forge)'},
+  shipping:{title:'VEHICLE INTEGRATION + SHIPPING',color:'rgba(150,100,255,0.9)',desc:'Two vehicle assembly bays. Parts arrive from Machine Shop and Assembly Staging. Completed vehicles exit via roll-up loading dock. First vehicles out the door: SP50 and SP100.',equipment:['Assembly Bay 1','Assembly Bay 2','Roll-Up Loading Dock','Vehicle QC / Inspection'],budget:'(included in build-out)'},
+  mezz:{title:'MEZZANINE — LEVEL 2',color:'#ffd700',desc:'Maximizes vertical space over the shop floor. Server room houses NVIDIA Blackwell cluster. Operations HQ with Aura dashboard and Oz monitoring. Toggle L2 view above to see layout. ~2,000 sq ft added at minimal cost vs building out.',equipment:['NVIDIA Blackwell Server Room','Raised Floor + ESD Protection','Precision HVAC','Halon Fire Suppression','Node Operator Office','Aura Dashboard Station','Oz Real-Time Monitor','Conference + Comms','Loft Storage'],budget:'(included in construction)'}
+};
+function showDetail(z){const d=zoneData[z];if(!d)return;document.getElementById('detail-title').style.color=d.color;document.getElementById('detail-title').textContent=d.title;const dp=document.getElementById('detail-desc');dp.style.color='rgba(200,220,230,0.7)';dp.style.fontFamily='Barlow,sans-serif';dp.style.fontSize='11px';dp.textContent=d.desc;document.getElementById('detail-equip').innerHTML=d.equipment.map(e=>`<div class="eq-item">${e}</div>`).join('');document.getElementById('detail-budget').innerHTML=`<div class="budget-line" style="border-color:${d.color}"><div class="blbl">NODE BUDGET</div><div class="amount" style="color:${d.color}">${d.budget}</div></div>`;}
+document.querySelectorAll('.zone-rect').forEach(el=>{
+  el.addEventListener('mouseenter',function(e){const d=zoneData[this.getAttribute('data-zone')];if(!d)return;const t=document.getElementById('tooltip');t.textContent=d.title;t.style.borderColor=d.color;t.style.color=d.color;t.style.display='block';});
+  el.addEventListener('mousemove',function(e){const t=document.getElementById('tooltip');t.style.left=(e.clientX+14)+'px';t.style.top=(e.clientY-10)+'px';});
+  el.addEventListener('mouseleave',()=>{document.getElementById('tooltip').style.display='none';});
+  el.addEventListener('click',function(){showDetail(this.getAttribute('data-zone'));});
+});
+function showLevel(l,btn){document.querySelectorAll('.level-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const m=document.getElementById('mezz-overlay');l==='mezz'?m.classList.add('active'):m.classList.remove('active');}
+showDetail('rdf2');
+</script>
+</body>
+</html>
