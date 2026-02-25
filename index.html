@@ -107,7 +107,7 @@
   <div class="floor-wrap">
     <div class="floor-meta">
       <span>FLOOR PLAN // GROUND LEVEL L1</span>
-      DOC-NZ-002 &nbsp;|&nbsp; REV C &nbsp;|&nbsp; FEB 2026 &nbsp;|&nbsp; SCALE 1"=14'
+      DOC-NZ-002 &nbsp;|&nbsp; REV D &nbsp;|&nbsp; FEB 2026 &nbsp;|&nbsp; SCALE 1"=14'
     </div>
     <div class="level-toggle">
       <button class="level-btn active" onclick="showLevel('ground',this)">L1 — GROUND FLOOR</button>
@@ -125,22 +125,7 @@
           <marker id="arrG" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="rgba(57,255,20,0.6)"/></marker>
         </defs>
 
-        <!-- ===== RESIDENTIAL WING (top-left attached) ===== -->
-        <rect x="18" y="18" width="145" height="290" fill="rgba(100,150,100,0.03)" stroke="rgba(100,180,100,0.35)" stroke-width="1.5" stroke-dasharray="6,4"/>
-        <text x="26" y="35" fill="rgba(100,200,100,0.35)" font-family="'Share Tech Mono'" font-size="8" letter-spacing="2">RESIDENTIAL</text>
-        <text x="26" y="47" fill="rgba(100,200,100,0.25)" font-family="'Share Tech Mono'" font-size="7">1,500 SQ FT</text>
-        <!-- Rooms -->
-        <rect x="26" y="54" width="128" height="65" fill="rgba(100,150,100,0.06)" stroke="rgba(100,200,100,0.2)" stroke-width="1" rx="2"/>
-        <text x="70" y="85" fill="rgba(100,200,100,0.45)" font-family="'Barlow Condensed'" font-size="12" text-anchor="middle">BEDROOM</text>
-        <rect x="26" y="128" width="60" height="60" fill="rgba(100,150,100,0.06)" stroke="rgba(100,200,100,0.2)" stroke-width="1" rx="2"/>
-        <text x="56" y="162" fill="rgba(100,200,100,0.45)" font-family="'Barlow Condensed'" font-size="10" text-anchor="middle">BATH</text>
-        <rect x="94" y="128" width="60" height="60" fill="rgba(100,150,100,0.06)" stroke="rgba(100,200,100,0.2)" stroke-width="1" rx="2"/>
-        <text x="124" y="162" fill="rgba(100,200,100,0.45)" font-family="'Barlow Condensed'" font-size="10" text-anchor="middle">OFFICE</text>
-        <rect x="26" y="197" width="128" height="96" fill="rgba(100,150,100,0.06)" stroke="rgba(100,200,100,0.2)" stroke-width="1" rx="2"/>
-        <text x="90" y="248" fill="rgba(100,200,100,0.45)" font-family="'Barlow Condensed'" font-size="11" text-anchor="middle">LIVING / KITCHEN</text>
-        <!-- Expansion joint marker -->
-        <line x1="163" y1="18" x2="163" y2="308" stroke="rgba(255,215,0,0.5)" stroke-width="2.5" stroke-dasharray="3,3"/>
-        <text x="155" y="320" fill="rgba(255,215,0,0.4)" font-family="'Share Tech Mono'" font-size="7" transform="rotate(-90,155,320)">DOWELED EXPANSION JOINT</text>
+        <!-- Residential wing removed — operator quarters to be sited as separate structure (zoning compliance) -->
 
         <!-- ===== INDUSTRIAL FLOOR OUTER WALL ===== -->
         <!-- Main industrial shell: x=163, y=18, w=900, h=585 -->
@@ -416,16 +401,18 @@
         <!-- Packing zone -->
         <rect x="975" y="423" width="80" height="60" fill="rgba(160,100,255,0.07)" stroke="rgba(160,100,255,0.3)" stroke-width="1" rx="2"/>
         <text x="980" y="451" fill="rgba(160,100,255,0.6)" font-family="'Barlow Condensed'" font-size="11">PACKING</text>
-        <!-- Roll-up door -->
-        <line x1="903" y1="560" x2="1063" y2="560" stroke="rgba(160,100,255,0.55)" stroke-width="5"/>
-        <text x="983" y="578" fill="rgba(160,100,255,0.35)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">ROLL-UP SHIPPING DOOR</text>
+        <!-- Dual roll-up shipping doors -->
+        <line x1="903" y1="560" x2="978" y2="560" stroke="rgba(160,100,255,0.55)" stroke-width="5"/>
+        <line x1="988" y1="560" x2="1063" y2="560" stroke="rgba(160,100,255,0.55)" stroke-width="5"/>
+        <text x="983" y="578" fill="rgba(160,100,255,0.35)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">DUAL ROLL-UP SHIPPING DOORS (12' CLR EA.)</text>
         <!-- Vehicle staging -->
         <rect x="911" y="498" width="144" height="55" fill="rgba(160,100,255,0.05)" stroke="rgba(160,100,255,0.2)" stroke-width="1" stroke-dasharray="4,3" rx="2"/>
         <text x="983" y="529" fill="rgba(160,100,255,0.5)" font-family="'Barlow Condensed'" font-size="11" text-anchor="middle">VEHICLE STAGING</text>
 
         <!-- ===== ZONE G: VEHICLE ASSEMBLY (bottom center) ===== -->
         <rect x="163" y="400" width="740" height="203" fill="rgba(200,150,50,0.02)" stroke="rgba(200,150,50,0.3)" stroke-width="1.5" stroke-dasharray="6,3"/>
-        <text x="173" y="416" fill="rgba(200,150,50,0.4)" font-family="'Share Tech Mono'" font-size="8" letter-spacing="2">ZONE G — VEHICLE ASSEMBLY + INTEGRATION</text>
+        <text x="173" y="416" fill="rgba(200,150,50,0.35)" font-family="'Share Tech Mono'" font-size="7" letter-spacing="2">ZONE G — VEHICLE ASSEMBLY</text>
+        <text x="173" y="428" fill="rgba(200,150,50,0.25)" font-family="'Share Tech Mono'" font-size="7">EARLY REVENUE WEDGE — CORE IS THE MESH, NOT VEHICLES</text>
         <!-- Assembly bays -->
         <rect x="173" y="424" width="180" height="160" fill="rgba(200,150,50,0.05)" stroke="rgba(200,150,50,0.25)" stroke-width="1" rx="3"/>
         <text x="263" y="508" fill="rgba(200,150,50,0.6)" font-family="'Barlow Condensed'" font-weight="700" font-size="16" text-anchor="middle">BAY 1</text>
@@ -481,7 +468,7 @@
           <rect x="240" y="90" width="230" height="130" fill="rgba(0,200,255,0.14)" stroke="#00c8ff" stroke-width="2" rx="4"/>
           <text x="355" y="118" fill="#00c8ff" font-family="'Barlow Condensed'" font-weight="900" font-size="18" text-anchor="middle" letter-spacing="2">SERVER ROOM</text>
           <text x="355" y="136" fill="rgba(0,200,255,0.65)" font-family="'Share Tech Mono'" font-size="8" text-anchor="middle">NVIDIA BLACKWELL CLUSTER</text>
-          <text x="355" y="149" fill="rgba(0,200,255,0.45)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">RAISED FLOOR · ESD · PRECISION HVAC · HALON</text>
+          <text x="355" y="149" fill="rgba(0,200,255,0.45)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">RAISED FLOOR · ESD · PRECISION HVAC · CLEAN AGENT (NOVEC 1230)</text>
           <text x="355" y="162" fill="rgba(0,200,255,0.45)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">FIBER → GROUND PLCs · 8' HEADROOM</text>
           <!-- Server racks -->
           <g fill="rgba(0,200,255,0.15)" stroke="#00c8ff" stroke-width="0.8">
@@ -613,7 +600,7 @@
         <div>UPPER DK &nbsp; <span class="sv">8' HEADROOM</span></div>
         <div>SLAB &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="sv">12" / 4,000 PSI</span></div>
         <div>REBAR &nbsp;&nbsp;&nbsp;&nbsp; <span class="sv">#5 @ 12" O.C.</span></div>
-        <div>EXP JNT &nbsp;&nbsp; <span class="sv">DOWELED @ RES LINE</span></div>
+        <div>EXP JNT &nbsp;&nbsp; <span class="sv">DOWELED @ HAAS HUB</span></div>
         <div>ISO JNT &nbsp;&nbsp; <span class="sv">HAAS HUB PERIMETER</span></div>
         <div>POWER &nbsp;&nbsp;&nbsp;&nbsp; <span class="sv">480V 3Φ BUS DUCT</span></div>
         <div>PNEU &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="sv">120 PSI MANIFOLD</span></div>
@@ -633,14 +620,14 @@
 
 <script>
 const Z={
-  intake:{title:'ZONE A — INTAKE',color:'#4488ff',desc:'Ground-level pads for aluminum pellet silos and ingot staging. Silos feed directly into the overhead 120 PSI pneumatic manifold. Receiving dock on the south wall. Material enters here and moves right through the Linear Kernel.',equipment:['AL Pellet Silo 1 (500lb)','AL Pellet Silo 2 (500lb)','Ingot Staging Area','Receiving Dock','Pneumatic Manifold Feed Connections','Overhead Utility Tie-In'],budget:'(included in build-out)'},
+  intake:{title:'ZONE A — INTAKE',color:'#4488ff',desc:'Ground-level pads for aluminum pellet silos and ingot staging. Silos feed directly into the overhead 120 PSI pneumatic manifold. Receiving dock on the south wall. Material enters here and moves right through the Linear Kernel.',equipment:['AL Pellet Silo 1 (500lb)','AL Pellet Silo 2 (500lb)','Ingot Staging Area','Receiving Dock','Pneumatic Manifold Feed Connections','Overhead Utility Tie-In','Dedicated Exhaust + Dry Suppression (Pellet Handling per zone)'],budget:'(included in build-out)'},
   rdf2:{title:'ZONE B — RDF-2 OCTO-NEXUS',color:'#00c8ff',desc:'The Physical Compiler. 8-head synchronous gantry with 10ft operational envelope driven by NVIDIA Blackwell real-time physics simulation. Zero-latency Script switching. Material feeds from overhead pneumatic manifold. 3ft rail buffer above for Omnit service access.',equipment:['8-Head Synchronous Gantry','NVIDIA Blackwell EI Physics','12-16 kg/hr Throughput','CF-Nylon / Aluminum Composites','160 sq ft Machine Footprint','Overhead Pneumatic Feed','Fiber → OZ Node Link'],budget:'$4,000,000'},
   miniforge:{title:'ZONE C — MINI-FORGE BANK',color:'#39ff14',desc:'40-pod modular rack aligned directly under mezzanine overhang for top-down servicing by Omnit rail. Pneumatic central feed from overhead manifold. Digit EI sorting. Scale up: splice into the pipe and bolt a new pod to the rack in 48 hours.',equipment:['40 Print Pods (CoreXY) on 8040 Rack','500lb Pneumatic Pellet Tank','Overhead Solenoid Manifold (120 PSI)','Digit Humanoid Sorter','Stainless Belt Conveyor → Assembly','Centralized Collection Trough','Aura Vision Parts ID','Top-Down Omnit Service Access'],budget:'$280,000–$420,000'},
-  machineshop:{title:'ZONE D — HAAS HUB',color:'#ff6b00',desc:'Dedicated vibration isolation slab joint surrounds this zone. Kinetic energy from CNC operations cannot transfer to RDF-2 or Mini-Forge precision sensors. Haas VF-4SS tool changers operate within the 10ft ground floor clearance. PLC cabinet links to Oz orchestration layer via fiber.',equipment:['Haas VF-4SS VMC (4th Axis, ATC 24+1)','Haas ST-25Y CNC Lathe','Universal Gear Hobber','CNC Mandrel Tube Bender','Atmosphere Furnace (Carburizing)','Automated Quench Tank (Auto Lift)','Vibratory Tumbler','SMT Pick-and-Place','Reflow Oven','Robotic Wheel Lacing','PLC Cabinet → Oz Fiber Link','Vibration Isolation Slab Perimeter'],budget:'$1,650,000–$2,050,000'},
-  energy:{title:'ZONE E — ENERGY + OZ NODE',color:'#ff2244',desc:'Nodes never go dark. 480V 3-phase bus duct runs overhead parallel to mezzanine loop powering all zones. Oz monitors grid state, battery level, and smart load shedding. Prioritizes RDF-2 and CNC over lights. 0.5-year payback on solar.',equipment:['75kW Rooftop Solar (188 panels)','225kWh Battery Bank','16-17 Tesla Powerwall 3','480V 3-Phase Main Panel','Overhead Bus Duct Distribution','Oz Grid State Monitor','Industrial HVAC + Exhaust','Halon Fire Suppression'],budget:'$180,000–$215,000'},
+  machineshop:{title:'ZONE D — HAAS HUB',color:'#ff6b00',desc:'Dedicated vibration isolation slab joint surrounds this zone. Kinetic energy from CNC operations cannot transfer to RDF-2 or Mini-Forge precision sensors. Haas VF-4SS tool changers operate within the 10ft ground floor clearance. PLC cabinet links to Oz orchestration layer via fiber.',equipment:['Haas VF-4SS VMC (4th Axis, ATC 24+1)','Haas ST-25Y CNC Lathe','Universal Gear Hobber','CNC Mandrel Tube Bender','Atmosphere Furnace (Carburizing)','Automated Quench Tank (Auto Lift)','Vibratory Tumbler','SMT Pick-and-Place','Reflow Oven','Robotic Wheel Lacing','PLC Cabinet → Oz Fiber Link','Vibration Isolation Slab Perimeter','Dedicated Exhaust + Wet/Dry Suppression (Furnace/Quench per zone)'],budget:'$1,650,000–$2,050,000'},
+  energy:{title:'ZONE E — ENERGY + OZ NODE',color:'#ff2244',desc:'Nodes never go dark. 480V 3-phase bus duct runs overhead parallel to mezzanine loop powering all zones. Oz monitors grid state, battery level, and smart load shedding. Prioritizes RDF-2 and CNC over lights. 0.5-year payback on solar.',equipment:['75kW Rooftop Solar (188 panels)','225kWh Battery Bank','16-17 Tesla Powerwall 3','480V 3-Phase Main Panel','Overhead Bus Duct Distribution','Oz Grid State Monitor','Industrial HVAC + Exhaust','Clean Agent Suppression (Novec 1230)'],budget:'$180,000–$215,000'},
   shipping:{title:'ZONE F — SHIPPING + MEZZANINE STAIR',color:'rgba(160,100,255,0.9)',desc:'Far right per Linear Kernel spec. Output exits here. Direct stair access from the mezzanine Battle Pair command deck. Operator can walk from server room to shipping floor in 30 seconds. Roll-up door for vehicle-scale deliveries.',equipment:['Roll-Up Shipping Door (12ft clearance)','Packing Station','Vehicle Staging Area','Direct Stair — Mezzanine Command Deck','Freight Scale','QC Inspection Station'],budget:'(included in build-out)'},
-  assembly:{title:'ZONE G — VEHICLE ASSEMBLY',color:'rgba(200,150,50,0.85)',desc:'Three assembly bays spanning the full width of the south floor. Parts arrive from Mini-Forge conveyor and Haas Hub. First vehicles: SP50 and SP100. Bay 3 configurable for larger platforms including VTOL integration.',equipment:['Assembly Bay 1','Assembly Bay 2','Assembly Bay 3 (VTOL-configurable)','Parts Flow Conveyor Inlet','Overhead Crane Rough-In','Vehicle QC / Final Inspection'],budget:'(included in build-out)'},
-  mezz:{title:'L2 — 360° MEZZANINE LOOP',color:'#ffd700',desc:'360° Omnit rail runs the full perimeter of the mezzanine. Carriers service any point on the production floor from above — top-down access to Mini-Forge pods without stopping production. Battle Pair command hub has direct sightlines to all zones. 8ft OSHA-compliant headroom on upper deck.',equipment:['360° Omnit Rail (Perimeter Loop)','Omnit Service Carriers','Battle Pair Command Hub (2x Operator Stations)','Aura Dashboard + Oz Monitor','NVIDIA Blackwell Server Room','Raised Floor + ESD Protection','Precision HVAC + Halon Suppression','Fiber Conduit → Ground PLCs','Tool Storage + Fixturing Room','Loft / Overflow Expansion Space','Direct Stair → Shipping Zone F'],budget:'(included in construction)'}
+  assembly:{title:'ZONE G — VEHICLE ASSEMBLY',color:'rgba(200,150,50,0.85)',desc:'Early revenue wedge — core is the mesh, not vehicles. Three assembly bays spanning the full width of the south floor. Parts arrive from Mini-Forge conveyor and Haas Hub. First vehicles: SP50 and SP100. Bay 3 configurable for larger platforms including VTOL integration.',equipment:['Assembly Bay 1','Assembly Bay 2','Assembly Bay 3 (VTOL-configurable)','Parts Flow Conveyor Inlet','Overhead Crane Rough-In','Vehicle QC / Final Inspection'],budget:'(included in build-out)'},
+  mezz:{title:'L2 — 360° MEZZANINE LOOP',color:'#ffd700',desc:'360° Omnit rail runs the full perimeter of the mezzanine. Carriers service any point on the production floor from above — top-down access to Mini-Forge pods without stopping production. Battle Pair command hub has direct sightlines to all zones. 8ft OSHA-compliant headroom on upper deck.',equipment:['360° Omnit Rail (Perimeter Loop)','Omnit Service Carriers','Battle Pair Command Hub (2x Operator Stations)','Aura Dashboard + Oz Monitor','NVIDIA Blackwell Server Room','Raised Floor + ESD Protection','Precision HVAC + Clean Agent Suppression (Novec 1230)','Fiber Conduit → Ground PLCs','Tool Storage + Fixturing Room','Loft / Overflow Expansion Space','Direct Stair → Shipping Zone F'],budget:'(included in construction)'}
 };
 
 function sd(z){const d=Z[z];if(!d)return;document.getElementById('dt').style.color=d.color;document.getElementById('dt').textContent=d.title;const dd=document.getElementById('dd');dd.style.color='rgba(200,220,230,0.7)';dd.style.fontFamily='Barlow,sans-serif';dd.style.fontSize='10px';dd.textContent=d.desc;document.getElementById('deq').innerHTML=d.equipment.map(e=>`<div class="eqi">${e}</div>`).join('');document.getElementById('dbud').innerHTML=`<div class="budline" style="border-color:${d.color}"><div class="blbl">BUDGET</div><div class="amt" style="color:${d.color}">${d.budget}</div></div>`;}
