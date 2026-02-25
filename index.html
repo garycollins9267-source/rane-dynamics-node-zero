@@ -26,15 +26,23 @@
   .hstats{display:flex;gap:24px;}
   .stat .val{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;color:var(--cyan);text-align:right;}
   .stat .lbl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:2px;text-align:right;}
-  .main{position:relative;z-index:5;display:grid;grid-template-columns:1fr 265px;min-height:calc(100vh - 64px);}
-  .floor-wrap{padding:16px;overflow:auto;}
-  .floor-meta{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:10px;display:flex;gap:20px;}
+  .main{position:relative;z-index:5;display:grid;grid-template-columns:1fr 240px;min-height:calc(100vh - 64px);}
+  .floor-wrap{padding:8px 8px 4px 8px;overflow:auto;}
+  .floor-meta{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:6px;display:flex;gap:20px;}
   .floor-meta span{color:var(--cyan);}
-  .level-toggle{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
+  .level-toggle{display:flex;gap:6px;margin-bottom:6px;align-items:center;flex-wrap:wrap;}
   .level-btn{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:5px 13px;
     border:1px solid var(--muted);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.2s;}
   .level-btn.active{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim);box-shadow:0 0 10px var(--cyan-glow);}
   .level-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:2px;}
+  .expand-btn{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:5px 10px;
+    border:1px solid rgba(0,200,255,0.3);background:transparent;color:rgba(0,200,255,0.4);cursor:pointer;
+    margin-left:auto;transition:all 0.2s;}
+  .expand-btn:hover{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim);}
+  /* Expanded / fullscreen mode */
+  body.expanded .main{grid-template-columns:1fr 0px;}
+  body.expanded .sidebar{display:none;}
+  body.expanded .floor-wrap{padding:4px;}
   .blueprint{position:relative;background:rgba(0,12,24,0.9);border:1px solid rgba(0,200,255,0.3);
     box-shadow:0 0 50px rgba(0,200,255,0.04),inset 0 0 100px rgba(0,200,255,0.015);}
   .blueprint svg{width:100%;height:auto;display:block;}
@@ -112,7 +120,11 @@
     <div class="level-toggle">
       <button class="level-btn active" onclick="showLevel('ground',this)">L1 — GROUND FLOOR</button>
       <button class="level-btn" onclick="showLevel('mezz',this)">L2 — 360° MEZZANINE LOOP</button>
+      <button class="level-btn" onclick="showLevel('thermal',this)">L3 — THERMAL / HEAT RECOVERY</button>
+      <button class="level-btn" onclick="showLevel('utilities',this)">L4 — UTILITIES / SPINE</button>
+      <button class="level-btn" onclick="showLevel('robotmesh',this)">L5 — ROBOT NAV MESH</button>
       <div class="elevation-badge">EAVE <span>22'</span> &nbsp;|&nbsp; GND <span>10'</span> &nbsp;|&nbsp; RAIL BUF <span>3'</span> &nbsp;|&nbsp; DECK <span>1'</span> &nbsp;|&nbsp; UPPER <span>8'</span></div>
+      <button class="expand-btn" onclick="toggleExpand(this)" id="expbtn">⤢ EXPAND</button>
     </div>
 
     <div class="blueprint">
@@ -398,6 +410,9 @@
           <line x1="911" y1="473" x2="966" y2="473"/>
         </g>
         <text x="914" y="492" fill="rgba(255,215,0,0.45)" font-family="'Share Tech Mono'" font-size="7">MEZZ STAIR</text>
+        <!-- Yellow-Light Interlock warning -->
+        <rect x="903" y="495" width="160" height="18" fill="rgba(255,215,0,0.07)" stroke="rgba(255,215,0,0.5)" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="983" y="507" fill="rgba(255,215,0,0.7)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">⚠ YELLOW-LIGHT INTERLOCK — ROBOT PAUSE ON DOOR OPEN</text>
         <!-- Packing zone -->
         <rect x="975" y="423" width="80" height="60" fill="rgba(160,100,255,0.07)" stroke="rgba(160,100,255,0.3)" stroke-width="1" rx="2"/>
         <text x="980" y="451" fill="rgba(160,100,255,0.6)" font-family="'Barlow Condensed'" font-size="11">PACKING</text>
@@ -533,6 +548,387 @@
           <text x="430" y="296" fill="rgba(255,215,0,0.45)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">TOP-DOWN SERVICE ACCESS TO MINI-FORGE · DIRECT STAIR TO SHIPPING</text>
         </g>
 
+        <!-- ===== L3: THERMAL / HEAT RECOVERY OVERLAY ===== -->
+        <g id="thermal" style="display:none;">
+          <!-- Dim base layer -->
+          <rect x="163" y="18" width="900" height="585" fill="rgba(2,5,10,0.78)"/>
+
+          <!-- ============ UTILITY COLUMN (THE SPINE) ============ -->
+          <rect x="791" y="18" width="14" height="585" fill="rgba(255,160,0,0.12)" stroke="rgba(255,160,0,0.7)" stroke-width="1.5"/>
+          <text x="787" y="310" fill="rgba(255,160,0,0.6)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle" transform="rotate(-90,787,310)" letter-spacing="2">UTILITY COLUMN — 480V · NOVEC · FIBER · GLYCOL</text>
+
+          <!-- ============ PRIMARY HEAT SOURCES ============ -->
+          <!-- Atmosphere Furnace thermal hood -->
+          <rect x="786" y="185" width="116" height="98" fill="rgba(255,60,0,0.13)" stroke="rgba(255,80,0,0.8)" stroke-width="2" stroke-dasharray="5,3" rx="4" filter="url(#glow2)"/>
+          <text x="844" y="208" fill="#ff6b00" font-family="'Share Tech Mono'" font-size="8" text-anchor="middle" letter-spacing="1">THERMAL HOOD</text>
+          <text x="844" y="220" fill="rgba(255,107,0,0.7)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">1,500°F+ CAPTURE</text>
+          <!-- Heat shimmer waves -->
+          <path d="M800,183 Q805,177 810,183 Q815,177 820,183 Q825,177 830,183 Q835,177 840,183 Q845,177 850,183 Q855,177 860,183 Q865,177 870,183 Q875,177 880,183 Q885,177 890,183" fill="none" stroke="rgba(255,80,0,0.5)" stroke-width="1.5"/>
+          <path d="M800,178 Q805,172 810,178 Q815,172 820,178 Q825,172 830,178 Q835,172 840,178 Q845,172 850,178 Q855,172 860,178 Q865,172 870,178 Q875,172 880,178 Q885,172 890,178" fill="none" stroke="rgba(255,80,0,0.3)" stroke-width="1"/>
+
+          <!-- Quench Tank thermal capture -->
+          <rect x="686" y="270" width="110" height="84" fill="rgba(255,120,0,0.1)" stroke="rgba(255,140,0,0.7)" stroke-width="1.5" stroke-dasharray="5,3" rx="4"/>
+          <text x="741" y="307" fill="rgba(255,140,0,0.8)" font-family="'Share Tech Mono'" font-size="8" text-anchor="middle">QUENCH CAPTURE</text>
+          <text x="741" y="319" fill="rgba(255,140,0,0.55)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">THERMAL HOOD</text>
+
+          <!-- ============ GLYCOL LOOP RISING (from furnace → HRV) ============ -->
+          <!-- Furnace feed line up through utility column -->
+          <line x1="798" y1="185" x2="798" y2="56" stroke="rgba(255,120,0,0.8)" stroke-width="3"/>
+          <line x1="798" y1="185" x2="798" y2="56" stroke="rgba(255,200,100,0.4)" stroke-width="1.5" stroke-dasharray="6,4" class="rail-anim"/>
+          <!-- Quench feed line to utility column -->
+          <line x1="741" y1="270" x2="741" y2="230" stroke="rgba(255,140,0,0.6)" stroke-width="2"/>
+          <line x1="741" y1="230" x2="798" y2="230" stroke="rgba(255,140,0,0.6)" stroke-width="2"/>
+          <!-- Arrow heads showing flow up -->
+          <polygon points="794,80 798,56 802,80" fill="rgba(255,120,0,0.8)"/>
+
+          <!-- ============ HRV UNIT (top of Zone D) ============ -->
+          <rect x="750" y="22" width="95" height="30" fill="rgba(255,140,0,0.18)" stroke="rgba(255,160,0,0.9)" stroke-width="2" rx="3" filter="url(#glow)"/>
+          <text x="797" y="34" fill="#ff9900" font-family="'Share Tech Mono'" font-size="8" text-anchor="middle" letter-spacing="1">HRV UNIT</text>
+          <text x="797" y="46" fill="rgba(255,160,0,0.6)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">HEAT RECOVERY VENTILATOR</text>
+
+          <!-- ============ SERVER RACK RDHx (mezzanine — shown at top) ============ -->
+          <rect x="240" y="22" width="230" height="30" fill="rgba(0,150,255,0.12)" stroke="rgba(0,180,255,0.7)" stroke-width="1.5" rx="3"/>
+          <text x="355" y="34" fill="rgba(0,200,255,0.9)" font-family="'Share Tech Mono'" font-size="8" text-anchor="middle" letter-spacing="1">BLACKWELL RDHx</text>
+          <text x="355" y="46" fill="rgba(0,200,255,0.5)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">REAR-DOOR HEAT EXCHANGER — BASE LOAD CAPTURE</text>
+          <!-- Feed line from RDHx to HRV -->
+          <line x1="470" y1="37" x2="750" y2="37" stroke="rgba(0,160,255,0.5)" stroke-width="2" stroke-dasharray="6,4"/>
+          <polygon points="730,33 750,37 730,41" fill="rgba(0,160,255,0.6)"/>
+
+          <!-- ============ NORTH WALL EXHAUST STACK (SUMMER MODE) ============ -->
+          <rect x="970" y="18" width="90" height="28" fill="rgba(255,60,0,0.15)" stroke="rgba(255,80,0,0.7)" stroke-width="1.5" rx="2"/>
+          <text x="1015" y="29" fill="rgba(255,80,0,0.85)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">EXHAUST STACK</text>
+          <text x="1015" y="40" fill="rgba(255,80,0,0.5)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">NORTH WALL (SUMMER REJECT)</text>
+          <!-- Exhaust arrows -->
+          <line x1="970" y1="32" x2="940" y2="32" stroke="rgba(255,80,0,0.6)" stroke-width="2" marker-end="url(#arr)"/>
+
+          <!-- ============ WINTER DISTRIBUTION (Battle Pair + Command Hub) ============ -->
+          <!-- Pipe from HRV left toward command hub area -->
+          <line x1="750" y1="37" x2="600" y2="37" stroke="rgba(255,160,0,0.55)" stroke-width="2.5" stroke-dasharray="8,4"/>
+          <rect x="490" y="22" width="110" height="30" fill="rgba(255,160,0,0.1)" stroke="rgba(255,160,0,0.6)" stroke-width="1.5" rx="3"/>
+          <text x="545" y="34" fill="rgba(255,160,0,0.85)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">BATTLE PAIR HEAT</text>
+          <text x="545" y="46" fill="rgba(255,160,0,0.5)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">WINTER — UP TO 40% HVAC REDUCTION</text>
+          <polygon points="615,33 600,37 615,41" fill="rgba(255,160,0,0.6)"/>
+
+          <!-- ============ AIR CURTAIN (Dirty/Clean barrier) ============ -->
+          <line x1="793" y1="60" x2="793" y2="400" stroke="rgba(100,220,255,0.7)" stroke-width="2.5" stroke-dasharray="4,3" filter="url(#glow)"/>
+          <!-- Downward velocity arrows along curtain -->
+          <polygon points="789,130 793,148 797,130" fill="rgba(100,220,255,0.6)"/>
+          <polygon points="789,200 793,218 797,200" fill="rgba(100,220,255,0.6)"/>
+          <polygon points="789,270 793,288 797,270" fill="rgba(100,220,255,0.6)"/>
+          <polygon points="789,340 793,358 797,340" fill="rgba(100,220,255,0.6)"/>
+          <rect x="710" y="105" width="80" height="22" fill="rgba(2,5,10,0.85)" stroke="rgba(100,220,255,0.4)" stroke-width="1" rx="2"/>
+          <text x="750" y="119" fill="rgba(100,220,255,0.8)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">AIR CURTAIN</text>
+          <!-- Zone labels on each side -->
+          <text x="740" y="165" fill="rgba(255,107,0,0.5)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">METALLURGY</text>
+          <text x="740" y="176" fill="rgba(255,107,0,0.4)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">DIRTY ZONE</text>
+          <text x="845" y="165" fill="rgba(0,200,255,0.5)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">SMT / ELEC</text>
+          <text x="845" y="176" fill="rgba(0,200,255,0.4)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">CLEAN ZONE</text>
+
+          <!-- ============ SEASONAL MODE LEGEND ============ -->
+          <rect x="170" y="430" width="240" height="130" fill="rgba(2,10,20,0.92)" stroke="rgba(255,160,0,0.4)" stroke-width="1.5" rx="4"/>
+          <text x="290" y="452" fill="#ff9900" font-family="'Barlow Condensed'" font-weight="700" font-size="13" text-anchor="middle" letter-spacing="3">SEASONAL MODES</text>
+          <!-- Winter -->
+          <rect x="178" y="460" width="104" height="88" fill="rgba(0,100,200,0.08)" stroke="rgba(100,180,255,0.4)" stroke-width="1" rx="3"/>
+          <text x="230" y="476" fill="rgba(100,200,255,0.8)" font-family="'Share Tech Mono'" font-size="8" text-anchor="middle">❄ WINTER</text>
+          <text x="182" y="490" fill="rgba(150,200,255,0.6)" font-family="'Share Tech Mono'" font-size="7">· Passive heating</text>
+          <text x="182" y="502" fill="rgba(150,200,255,0.6)" font-family="'Share Tech Mono'" font-size="7">· HRV → Battle Pair</text>
+          <text x="182" y="514" fill="rgba(150,200,255,0.6)" font-family="'Share Tech Mono'" font-size="7">· 40% HVAC reduction</text>
+          <text x="182" y="526" fill="rgba(150,200,255,0.6)" font-family="'Share Tech Mono'" font-size="7">· Near-zero grid heat</text>
+          <text x="182" y="538" fill="rgba(150,200,255,0.6)" font-family="'Share Tech Mono'" font-size="7">· Stack closed</text>
+          <!-- Summer -->
+          <rect x="290" y="460" width="112" height="88" fill="rgba(200,60,0,0.08)" stroke="rgba(255,140,0,0.4)" stroke-width="1" rx="3"/>
+          <text x="346" y="476" fill="rgba(255,160,0,0.8)" font-family="'Share Tech Mono'" font-size="8" text-anchor="middle">☀ SUMMER</text>
+          <text x="294" y="490" fill="rgba(255,180,100,0.6)" font-family="'Share Tech Mono'" font-size="7">· Active rejection</text>
+          <text x="294" y="502" fill="rgba(255,180,100,0.6)" font-family="'Share Tech Mono'" font-size="7">· Evap cooling mode</text>
+          <text x="294" y="514" fill="rgba(255,180,100,0.6)" font-family="'Share Tech Mono'" font-size="7">· Heat → North Wall</text>
+          <text x="294" y="526" fill="rgba(255,180,100,0.6)" font-family="'Share Tech Mono'" font-size="7">· Cool air → RDF-2</text>
+          <text x="294" y="538" fill="rgba(255,180,100,0.6)" font-family="'Share Tech Mono'" font-size="7">· Stack open</text>
+
+          <!-- ============ LAYER TITLE CARD ============ -->
+          <rect x="430" y="430" width="370" height="130" fill="rgba(2,10,20,0.92)" stroke="rgba(255,120,0,0.4)" stroke-width="1.5" rx="4"/>
+          <text x="615" y="455" fill="#ff9900" font-family="'Barlow Condensed'" font-weight="900" font-size="16" text-anchor="middle" letter-spacing="4">L3 — THERMAL ARCHITECTURE</text>
+          <text x="615" y="472" fill="rgba(255,160,0,0.6)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">HEAT RECOVERY · THERMODYNAMIC ZONING · AIR CURTAIN BARRIER</text>
+          <text x="440" y="492" fill="rgba(255,140,0,0.55)" font-family="'Share Tech Mono'" font-size="8">PRIMARY SOURCES</text>
+          <text x="440" y="505" fill="rgba(255,140,0,0.4)" font-family="'Share Tech Mono'" font-size="7">▸ Atmo Furnace (1,500°F+)</text>
+          <text x="440" y="517" fill="rgba(255,140,0,0.4)" font-family="'Share Tech Mono'" font-size="7">▸ Quench Tank thermal</text>
+          <text x="440" y="529" fill="rgba(255,140,0,0.4)" font-family="'Share Tech Mono'" font-size="7">▸ Blackwell RDHx base load</text>
+          <text x="615" y="492" fill="rgba(0,200,255,0.55)" font-family="'Share Tech Mono'" font-size="8">DISTRIBUTION</text>
+          <text x="615" y="505" fill="rgba(0,200,255,0.4)" font-family="'Share Tech Mono'" font-size="7">▸ Closed-loop glycol system</text>
+          <text x="615" y="517" fill="rgba(0,200,255,0.4)" font-family="'Share Tech Mono'" font-size="7">▸ Utility column spine</text>
+          <text x="615" y="529" fill="rgba(0,200,255,0.4)" font-family="'Share Tech Mono'" font-size="7">▸ HRV unit — seasonal switch</text>
+          <text x="440" y="548" fill="rgba(100,220,255,0.5)" font-family="'Share Tech Mono'" font-size="7">AIR CURTAIN — HIGH-VELOCITY DOWNWARD · DIRTY/CLEAN BARRIER · NO WALLS NEEDED</text>
+        </g>
+
+        <!-- ===== L4: UTILITIES / SPINE ===== -->
+        <g id="utilities" style="display:none;">
+          <!-- Dim base -->
+          <rect x="163" y="18" width="900" height="585" fill="rgba(2,5,10,0.8)"/>
+
+          <!-- ===== UTILITY COLUMN SPINE (x=791, full height) ===== -->
+          <rect x="787" y="18" width="18" height="585" fill="rgba(255,136,0,0.06)" stroke="rgba(255,136,0,0.5)" stroke-width="1.5"/>
+          <!-- 5 conduit lanes inside column -->
+          <rect x="788" y="22" width="3" height="581" fill="rgba(255,136,0,0.3)"/>
+          <rect x="792" y="22" width="3" height="581" fill="rgba(170,255,0,0.25)"/>
+          <rect x="796" y="22" width="3" height="581" fill="rgba(0,200,255,0.25)"/>
+          <rect x="800" y="22" width="3" height="420" fill="rgba(255,68,187,0.25)"/>
+          <rect x="804" y="22" width="3" height="500" fill="rgba(68,136,255,0.25)"/>
+          <text x="783" y="315" fill="rgba(255,136,0,0.55)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle" transform="rotate(-90,783,315)" letter-spacing="2">UTILITY SPINE — ALL SYSTEMS</text>
+
+          <!-- ===== TRACK 1: 480V BUS DUCT (amber) ===== -->
+          <rect x="897" y="24" width="34" height="14" fill="rgba(255,136,0,0.2)" stroke="#ff8800" stroke-width="1.5" rx="2"/>
+          <text x="914" y="34" fill="#ff8800" font-family="'Share Tech Mono'" font-size="5.5" text-anchor="middle">480V PANEL</text>
+          <line x1="897" y1="31" x2="163" y2="31" stroke="#ff8800" stroke-width="3" opacity="0.75"/>
+          <line x1="897" y1="31" x2="163" y2="31" stroke="rgba(255,200,100,0.4)" stroke-width="1.5" stroke-dasharray="8,4" class="rail-anim"/>
+          <polygon points="610,27 590,31 610,35" fill="rgba(255,136,0,0.75)"/>
+          <polygon points="350,27 330,31 350,35" fill="rgba(255,136,0,0.75)"/>
+          <!-- Drops to zone sub-panels -->
+          <line x1="230" y1="31" x2="230" y2="88" stroke="rgba(255,136,0,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <rect x="218" y="88" width="24" height="12" fill="rgba(255,136,0,0.15)" stroke="rgba(255,136,0,0.7)" stroke-width="1" rx="1"/>
+          <text x="230" y="97" fill="rgba(255,136,0,0.85)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">60A</text>
+          <line x1="405" y1="31" x2="405" y2="88" stroke="rgba(255,136,0,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <rect x="393" y="88" width="24" height="12" fill="rgba(255,136,0,0.15)" stroke="rgba(255,136,0,0.7)" stroke-width="1" rx="1"/>
+          <text x="405" y="97" fill="rgba(255,136,0,0.85)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">200A</text>
+          <line x1="568" y1="31" x2="568" y2="88" stroke="rgba(255,136,0,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <rect x="556" y="88" width="24" height="12" fill="rgba(255,136,0,0.15)" stroke="rgba(255,136,0,0.7)" stroke-width="1" rx="1"/>
+          <text x="568" y="97" fill="rgba(255,136,0,0.85)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">150A</text>
+          <line x1="791" y1="31" x2="791" y2="155" stroke="rgba(255,136,0,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <rect x="779" y="155" width="24" height="12" fill="rgba(255,136,0,0.15)" stroke="rgba(255,136,0,0.7)" stroke-width="1" rx="1"/>
+          <text x="791" y="164" fill="rgba(255,136,0,0.85)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">400A</text>
+
+          <!-- ===== TRACK 2: PNEUMATIC 120 PSI (lime) ===== -->
+          <rect x="168" y="103" width="44" height="13" fill="rgba(170,255,0,0.12)" stroke="#aaff00" stroke-width="1.5" rx="2"/>
+          <text x="190" y="112" fill="#aaff00" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">SILO SOURCE</text>
+          <line x1="212" y1="109" x2="585" y2="109" stroke="#aaff00" stroke-width="2.5" opacity="0.7"/>
+          <line x1="212" y1="109" x2="585" y2="109" stroke="rgba(170,255,0,0.3)" stroke-width="1" stroke-dasharray="6,4" class="rail-anim"/>
+          <polygon points="400,105 420,109 400,113" fill="rgba(170,255,0,0.75)"/>
+          <!-- Drops -->
+          <line x1="210" y1="109" x2="210" y2="168" stroke="rgba(170,255,0,0.45)" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <text x="213" y="164" fill="rgba(170,255,0,0.6)" font-family="'Share Tech Mono'" font-size="5.5">SILO 1</text>
+          <line x1="250" y1="109" x2="250" y2="168" stroke="rgba(170,255,0,0.45)" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <text x="253" y="164" fill="rgba(170,255,0,0.6)" font-family="'Share Tech Mono'" font-size="5.5">SILO 2</text>
+          <line x1="405" y1="109" x2="405" y2="152" stroke="rgba(170,255,0,0.45)" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <text x="408" y="148" fill="rgba(170,255,0,0.6)" font-family="'Share Tech Mono'" font-size="5.5">RDF-2 FEED</text>
+          <line x1="542" y1="109" x2="542" y2="148" stroke="rgba(170,255,0,0.45)" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <text x="545" y="144" fill="rgba(170,255,0,0.6)" font-family="'Share Tech Mono'" font-size="5.5">PODS ×40</text>
+          <text x="375" y="103" fill="rgba(170,255,0,0.45)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">120 PSI MANIFOLD</text>
+
+          <!-- ===== TRACK 3: FIBER BACKBONE / OZ (cyan) ===== -->
+          <rect x="957" y="103" width="64" height="13" fill="rgba(0,200,255,0.1)" stroke="#00c8ff" stroke-width="1.5" rx="2"/>
+          <text x="989" y="112" fill="#00c8ff" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">SERVER ROOM</text>
+          <line x1="957" y1="109" x2="163" y2="109" stroke="rgba(0,200,255,0.55)" stroke-width="2" stroke-dasharray="8,3"/>
+          <polygon points="500,105 480,109 500,113" fill="rgba(0,200,255,0.65)"/>
+          <polygon points="300,105 280,109 300,113" fill="rgba(0,200,255,0.65)"/>
+          <!-- PLC node circles -->
+          <circle cx="230" cy="109" r="4" fill="rgba(0,200,255,0.2)" stroke="#00c8ff" stroke-width="1.2"/>
+          <text x="230" y="124" fill="rgba(0,200,255,0.65)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">PLC-A</text>
+          <circle cx="405" cy="109" r="4" fill="rgba(0,200,255,0.2)" stroke="#00c8ff" stroke-width="1.2"/>
+          <text x="405" y="124" fill="rgba(0,200,255,0.65)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">PLC-B</text>
+          <circle cx="568" cy="109" r="4" fill="rgba(0,200,255,0.2)" stroke="#00c8ff" stroke-width="1.2"/>
+          <text x="568" y="124" fill="rgba(0,200,255,0.65)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">PLC-C</text>
+          <circle cx="791" cy="109" r="4" fill="rgba(0,200,255,0.2)" stroke="#00c8ff" stroke-width="1.2"/>
+          <text x="791" y="124" fill="rgba(0,200,255,0.65)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">PLC-D</text>
+          <circle cx="960" cy="109" r="4" fill="rgba(0,200,255,0.2)" stroke="#00c8ff" stroke-width="1.2"/>
+          <text x="960" y="124" fill="rgba(0,200,255,0.65)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">PLC-E</text>
+          <text x="680" y="103" fill="rgba(0,200,255,0.4)" font-family="'Share Tech Mono'" font-size="5.5">OZ ORCHESTRATION — SINGLE-MODE FIBER</text>
+
+          <!-- ===== TRACK 4: NOVEC 1230 SUPPRESSION (magenta) ===== -->
+          <rect x="905" y="125" width="52" height="13" fill="rgba(255,68,187,0.12)" stroke="#ff44bb" stroke-width="1.5" rx="2"/>
+          <text x="931" y="134" fill="#ff44bb" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">NOVEC PANEL</text>
+          <line x1="905" y1="131" x2="163" y2="131" stroke="rgba(255,68,187,0.5)" stroke-width="2"/>
+          <polygon points="550,127 530,131 550,135" fill="rgba(255,68,187,0.65)"/>
+          <!-- Branch drops -->
+          <line x1="960" y1="131" x2="960" y2="158" stroke="rgba(255,68,187,0.45)" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <text x="963" y="154" fill="rgba(255,68,187,0.6)" font-family="'Share Tech Mono'" font-size="5.5">SERVER RM</text>
+          <line x1="405" y1="131" x2="405" y2="173" stroke="rgba(255,68,187,0.45)" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <text x="408" y="169" fill="rgba(255,68,187,0.6)" font-family="'Share Tech Mono'" font-size="5.5">RDF-2 ZONE</text>
+          <!-- Zone D warning — NO NOVEC at metal fire sources -->
+          <line x1="791" y1="131" x2="791" y2="182" stroke="rgba(255,68,187,0.3)" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <rect x="753" y="182" width="76" height="16" fill="rgba(255,34,68,0.1)" stroke="rgba(255,34,68,0.6)" stroke-width="1" rx="1"/>
+          <text x="791" y="193" fill="rgba(255,34,68,0.8)" font-family="'Share Tech Mono'" font-size="5.5" text-anchor="middle">⚠ CLASS D ONLY — NO NOVEC</text>
+          <text x="570" y="125" fill="rgba(255,68,187,0.4)" font-family="'Share Tech Mono'" font-size="5.5">NOVEC 1230 — MAIN SUPPRESSION LINE</text>
+
+          <!-- ===== EMERGENCY SHUTOFFS — 4 LOCATIONS ===== -->
+          <!-- E1: Zone A entry -->
+          <polygon points="172,145 180,153 172,161 164,153" fill="rgba(255,34,68,0.25)" stroke="#ff2244" stroke-width="1.5"/>
+          <text x="172" y="157" fill="#ff2244" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">E1</text>
+          <text x="172" y="172" fill="rgba(255,34,68,0.6)" font-family="'Share Tech Mono'" font-size="5.5" text-anchor="middle">E-STOP</text>
+          <!-- E2: B/C junction -->
+          <polygon points="493,145 501,153 493,161 485,153" fill="rgba(255,34,68,0.25)" stroke="#ff2244" stroke-width="1.5"/>
+          <text x="493" y="157" fill="#ff2244" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">E2</text>
+          <text x="493" y="172" fill="rgba(255,34,68,0.6)" font-family="'Share Tech Mono'" font-size="5.5" text-anchor="middle">E-STOP</text>
+          <!-- E3: Utility Column / Haas -->
+          <polygon points="791,207 799,215 791,223 783,215" fill="rgba(255,34,68,0.25)" stroke="#ff2244" stroke-width="1.5"/>
+          <text x="791" y="219" fill="#ff2244" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">E3</text>
+          <text x="791" y="234" fill="rgba(255,34,68,0.6)" font-family="'Share Tech Mono'" font-size="5.5" text-anchor="middle">E-STOP</text>
+          <!-- E4: Zone F exit -->
+          <polygon points="1050,340 1058,348 1050,356 1042,348" fill="rgba(255,34,68,0.25)" stroke="#ff2244" stroke-width="1.5"/>
+          <text x="1050" y="352" fill="#ff2244" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">E4</text>
+          <text x="1050" y="367" fill="rgba(255,34,68,0.6)" font-family="'Share Tech Mono'" font-size="5.5" text-anchor="middle">E-STOP</text>
+
+          <!-- ===== GROUNDING GRID — HAAS HUB SLAB ISOLATION ===== -->
+          <rect x="683" y="60" width="108" height="280" fill="rgba(57,255,20,0.04)" stroke="rgba(57,255,20,0.45)" stroke-width="1.5" stroke-dasharray="6,4" rx="3"/>
+          <line x1="683" y1="130" x2="791" y2="130" stroke="rgba(57,255,20,0.18)" stroke-width="1" stroke-dasharray="4,6"/>
+          <line x1="683" y1="200" x2="791" y2="200" stroke="rgba(57,255,20,0.18)" stroke-width="1" stroke-dasharray="4,6"/>
+          <line x1="683" y1="270" x2="791" y2="270" stroke="rgba(57,255,20,0.18)" stroke-width="1" stroke-dasharray="4,6"/>
+          <line x1="720" y1="60" x2="720" y2="340" stroke="rgba(57,255,20,0.18)" stroke-width="1" stroke-dasharray="4,6"/>
+          <line x1="757" y1="60" x2="757" y2="340" stroke="rgba(57,255,20,0.18)" stroke-width="1" stroke-dasharray="4,6"/>
+          <text x="683" y="72" fill="rgba(57,255,20,0.5)" font-family="'Share Tech Mono'" font-size="8">⏚</text>
+          <text x="777" y="72" fill="rgba(57,255,20,0.5)" font-family="'Share Tech Mono'" font-size="8">⏚</text>
+          <text x="683" y="333" fill="rgba(57,255,20,0.5)" font-family="'Share Tech Mono'" font-size="8">⏚</text>
+          <text x="777" y="333" fill="rgba(57,255,20,0.5)" font-family="'Share Tech Mono'" font-size="8">⏚</text>
+          <text x="737" y="356" fill="rgba(57,255,20,0.6)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">GROUNDING GRID — HAAS ISOLATION SLAB</text>
+          <text x="737" y="367" fill="rgba(57,255,20,0.4)" font-family="'Share Tech Mono'" font-size="5.5" text-anchor="middle">#4 BARE COPPER · 10FT GRID · UFER BOND</text>
+
+          <!-- ===== ESD PROTECTION ZONE — RDF-2 ===== -->
+          <rect x="318" y="60" width="175" height="280" fill="rgba(0,200,255,0.025)" stroke="rgba(0,200,255,0.22)" stroke-width="1" stroke-dasharray="2,8" rx="2"/>
+          <text x="405" y="355" fill="rgba(0,200,255,0.4)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">ESD ZONE — CONDUCTIVE FLOORING</text>
+
+          <!-- ===== UTILITY COLUMN CROSS-SECTION CALLOUT ===== -->
+          <rect x="822" y="245" width="132" height="100" fill="rgba(2,8,18,0.95)" stroke="rgba(255,136,0,0.5)" stroke-width="1.5" rx="3"/>
+          <text x="888" y="261" fill="rgba(255,136,0,0.85)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle" letter-spacing="1">SPINE CROSS-SECTION</text>
+          <rect x="830" y="268" width="7" height="7" fill="rgba(255,136,0,0.55)" stroke="#ff8800" stroke-width="1"/>
+          <text x="842" y="276" fill="rgba(255,136,0,0.8)" font-family="'Share Tech Mono'" font-size="6.5">480V BUS DUCT</text>
+          <rect x="830" y="281" width="7" height="7" fill="rgba(170,255,0,0.45)" stroke="#aaff00" stroke-width="1"/>
+          <text x="842" y="289" fill="rgba(170,255,0,0.75)" font-family="'Share Tech Mono'" font-size="6.5">120 PSI PNEUMATIC</text>
+          <rect x="830" y="294" width="7" height="7" fill="rgba(0,200,255,0.4)" stroke="#00c8ff" stroke-width="1"/>
+          <text x="842" y="302" fill="rgba(0,200,255,0.75)" font-family="'Share Tech Mono'" font-size="6.5">FIBER BACKBONE</text>
+          <rect x="830" y="307" width="7" height="7" fill="rgba(255,68,187,0.4)" stroke="#ff44bb" stroke-width="1"/>
+          <text x="842" y="315" fill="rgba(255,68,187,0.75)" font-family="'Share Tech Mono'" font-size="6.5">NOVEC 1230</text>
+          <rect x="830" y="320" width="7" height="7" fill="rgba(68,136,255,0.4)" stroke="#4488ff" stroke-width="1"/>
+          <text x="842" y="328" fill="rgba(68,136,255,0.75)" font-family="'Share Tech Mono'" font-size="6.5">GLYCOL LOOP</text>
+          <text x="830" y="340" fill="rgba(255,34,68,0.55)" font-family="'Share Tech Mono'" font-size="5">⬥ E-STOP NETWORKED — ALL SYSTEMS HALT</text>
+
+          <!-- ===== LAYER TITLE CARD ===== -->
+          <rect x="170" y="430" width="600" height="130" fill="rgba(2,10,20,0.93)" stroke="rgba(255,136,0,0.4)" stroke-width="1.5" rx="4"/>
+          <text x="470" y="454" fill="#ff8800" font-family="'Barlow Condensed'" font-weight="900" font-size="16" text-anchor="middle" letter-spacing="4">L4 — UTILITIES / SPINE</text>
+          <text x="470" y="471" fill="rgba(255,160,80,0.6)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">POWER · PNEUMATIC · FIBER · SUPPRESSION · GROUNDING</text>
+          <rect x="182" y="480" width="8" height="8" fill="rgba(255,136,0,0.5)" stroke="#ff8800" stroke-width="1"/>
+          <text x="195" y="489" fill="rgba(255,136,0,0.78)" font-family="'Share Tech Mono'" font-size="6.5">480V 3Φ BUS DUCT — Zone E panel → all zones (60A–400A drops)</text>
+          <rect x="182" y="494" width="8" height="8" fill="rgba(170,255,0,0.45)" stroke="#aaff00" stroke-width="1"/>
+          <text x="195" y="503" fill="rgba(170,255,0,0.72)" font-family="'Share Tech Mono'" font-size="6.5">120 PSI PNEUMATIC — Silos → Zones B, C (RDF-2 + 40 forge pods)</text>
+          <rect x="182" y="508" width="8" height="8" fill="rgba(0,200,255,0.4)" stroke="#00c8ff" stroke-width="1"/>
+          <text x="195" y="517" fill="rgba(0,200,255,0.72)" font-family="'Share Tech Mono'" font-size="6.5">FIBER BACKBONE — Server Room → all PLCs A–E (Oz orchestration)</text>
+          <rect x="182" y="522" width="8" height="8" fill="rgba(255,68,187,0.4)" stroke="#ff44bb" stroke-width="1"/>
+          <text x="195" y="531" fill="rgba(255,68,187,0.72)" font-family="'Share Tech Mono'" font-size="6.5">NOVEC 1230 — Panel → Server Rm + RDF-2 · CLASS D ONLY at Haas</text>
+          <rect x="182" y="536" width="8" height="8" fill="rgba(57,255,20,0.4)" stroke="#39ff14" stroke-width="1"/>
+          <text x="195" y="545" fill="rgba(57,255,20,0.72)" font-family="'Share Tech Mono'" font-size="6.5">GROUNDING GRID — Haas slab (#4 copper · Ufer bond) + ESD zones</text>
+          <polygon points="445,484 453,492 445,500 437,492" fill="rgba(255,34,68,0.25)" stroke="#ff2244" stroke-width="1.2"/>
+          <text x="460" y="493" fill="rgba(255,34,68,0.75)" font-family="'Share Tech Mono'" font-size="6.5">E-STOP INTERLOCKS — 4 LOCATIONS · ALL SYSTEMS HALT</text>
+          <text x="460" y="507" fill="rgba(255,34,68,0.5)" font-family="'Share Tech Mono'" font-size="6">E1: Zone A Entry  ·  E2: B/C Junction  ·  E3: Utility Column/Haas  ·  E4: Zone F Exit</text>
+          <text x="460" y="521" fill="rgba(255,136,0,0.4)" font-family="'Share Tech Mono'" font-size="6">UTILITY COLUMN @ x=791 — ALL 5 SYSTEMS ROUTE THROUGH SINGLE SPINE</text>
+          <text x="460" y="540" fill="rgba(255,136,0,0.3)" font-family="'Share Tech Mono'" font-size="5.5">Est. included in build-out · Single-conduit spine reduces run lengths by avg 40%</text>
+        </g>
+
+        <!-- ===== L5: ROBOT NAVIGATION MESH ===== -->
+        <g id="robotmesh" style="display:none;">
+          <!-- Dim base -->
+          <rect x="163" y="18" width="900" height="585" fill="rgba(2,5,10,0.82)"/>
+
+          <!-- OMNIT RAIL RIGHT-OF-WAY ground projection -->
+          <rect x="168" y="23" width="890" height="575" fill="none" stroke="rgba(255,215,0,0.22)" stroke-width="3" stroke-dasharray="10,6" rx="2"/>
+          <text x="200" y="38" fill="rgba(255,215,0,0.4)" font-family="'Share Tech Mono'" font-size="6" letter-spacing="1">OMNIT RAIL R.O.W. — ROBOTS YIELD ON SERVICE DESCENT</text>
+
+          <!-- EXCLUSION: RDF-2 gantry — 4ft buffer -->
+          <rect x="320" y="62" width="170" height="270" fill="rgba(255,34,68,0.08)" stroke="rgba(255,34,68,0.75)" stroke-width="2" stroke-dasharray="6,3" rx="3"/>
+          <text x="405" y="80" fill="rgba(255,34,68,0.85)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">X EXCLUSION</text>
+          <text x="405" y="92" fill="rgba(255,34,68,0.6)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">RDF-2 GANTRY — 4FT BUFFER</text>
+          <text x="405" y="104" fill="rgba(255,34,68,0.45)" font-family="'Share Tech Mono'" font-size="5.5" text-anchor="middle">NO DIGIT ACCESS DURING PRINT OPS</text>
+
+          <!-- EXCLUSION: Haas CNC + Furnace -->
+          <rect x="685" y="62" width="200" height="220" fill="rgba(255,80,0,0.07)" stroke="rgba(255,80,0,0.65)" stroke-width="2" stroke-dasharray="6,3" rx="3"/>
+          <text x="785" y="80" fill="rgba(255,80,0,0.8)" font-family="'Share Tech Mono'" font-size="7" text-anchor="middle">X EXCLUSION</text>
+          <text x="785" y="92" fill="rgba(255,80,0,0.6)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">HAAS CNC + FURNACE</text>
+          <text x="785" y="104" fill="rgba(255,80,0,0.4)" font-family="'Share Tech Mono'" font-size="5.5" text-anchor="middle">SPINNING TOOLS / THERMAL HAZARD</text>
+
+          <!-- EXCLUSION: Stair base human-machine Zone F -->
+          <rect x="915" y="395" width="55" height="75" fill="rgba(255,215,0,0.1)" stroke="rgba(255,215,0,0.8)" stroke-width="2" stroke-dasharray="4,3" rx="2"/>
+          <text x="943" y="415" fill="rgba(255,215,0,0.85)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">H-M ZONE</text>
+          <text x="943" y="427" fill="rgba(255,215,0,0.65)" font-family="'Share Tech Mono'" font-size="5.5" text-anchor="middle">STAIR BASE</text>
+          <text x="943" y="439" fill="rgba(255,215,0,0.5)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">INTERLOCK</text>
+
+          <!-- PRIMARY E-W HIGHWAY y=370-398 -->
+          <rect x="168" y="370" width="730" height="28" fill="rgba(57,255,20,0.07)" stroke="rgba(57,255,20,0.5)" stroke-width="1.5" rx="2"/>
+          <line x1="168" y1="384" x2="898" y2="384" stroke="rgba(57,255,20,0.55)" stroke-width="1.5" stroke-dasharray="12,6"/>
+          <polygon points="340,380 360,384 340,388" fill="rgba(57,255,20,0.7)"/>
+          <polygon points="530,380 550,384 530,388" fill="rgba(57,255,20,0.7)"/>
+          <polygon points="720,380 740,384 720,388" fill="rgba(57,255,20,0.7)"/>
+          <text x="280" y="367" fill="rgba(57,255,20,0.55)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">PRIMARY HIGHWAY — 3 MPH MAX</text>
+
+          <!-- NORTH SERVICE LANE y=68-84 -->
+          <rect x="168" y="68" width="730" height="16" fill="rgba(57,255,20,0.04)" stroke="rgba(57,255,20,0.3)" stroke-width="1" rx="1"/>
+          <line x1="168" y1="76" x2="898" y2="76" stroke="rgba(57,255,20,0.35)" stroke-width="1" stroke-dasharray="8,6"/>
+          <polygon points="400,72 420,76 400,80" fill="rgba(57,255,20,0.45)"/>
+          <polygon points="650,80 630,76 650,72" fill="rgba(57,255,20,0.45)"/>
+          <text x="600" y="66" fill="rgba(57,255,20,0.35)" font-family="'Share Tech Mono'" font-size="5.5">NORTH SERVICE LANE — 1.5 MPH BI-DIRECTIONAL</text>
+
+          <!-- VERTICAL CONNECTORS -->
+          <rect x="228" y="68" width="18" height="302" fill="rgba(57,255,20,0.05)" stroke="rgba(57,255,20,0.3)" stroke-width="1" rx="1"/>
+          <polygon points="232,220 237,200 242,220" fill="rgba(57,255,20,0.45)"/>
+          <rect x="524" y="68" width="18" height="302" fill="rgba(57,255,20,0.05)" stroke="rgba(57,255,20,0.3)" stroke-width="1" rx="1"/>
+          <polygon points="528,200 533,180 538,200" fill="rgba(57,255,20,0.45)"/>
+          <text x="237" y="358" fill="rgba(57,255,20,0.35)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">V1</text>
+          <text x="533" y="358" fill="rgba(57,255,20,0.35)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">V2</text>
+
+          <!-- YIELD ZONES -->
+          <rect x="168" y="345" width="150" height="28" fill="rgba(255,215,0,0.07)" stroke="rgba(255,215,0,0.55)" stroke-width="1.5" stroke-dasharray="4,3" rx="2"/>
+          <text x="243" y="361" fill="rgba(255,215,0,0.7)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">YIELD — INTAKE DOCK</text>
+          <rect x="493" y="345" width="140" height="28" fill="rgba(255,215,0,0.07)" stroke="rgba(255,215,0,0.55)" stroke-width="1.5" stroke-dasharray="4,3" rx="2"/>
+          <text x="563" y="361" fill="rgba(255,215,0,0.7)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">YIELD — CONVEYOR CROSS</text>
+          <rect x="168" y="398" width="730" height="26" fill="rgba(255,215,0,0.05)" stroke="rgba(255,215,0,0.4)" stroke-width="1" stroke-dasharray="4,3" rx="1"/>
+          <text x="533" y="413" fill="rgba(255,215,0,0.55)" font-family="'Share Tech Mono'" font-size="5.5" text-anchor="middle">YIELD THRESHOLD — ASSEMBLY BAYS — SENSOR SWEEP REQUIRED</text>
+          <rect x="903" y="370" width="140" height="88" fill="rgba(255,215,0,0.06)" stroke="rgba(255,215,0,0.45)" stroke-width="1.5" stroke-dasharray="4,3" rx="2"/>
+          <text x="973" y="410" fill="rgba(255,215,0,0.65)" font-family="'Share Tech Mono'" font-size="6" text-anchor="middle">YIELD</text>
+          <text x="973" y="422" fill="rgba(255,215,0,0.5)" font-family="'Share Tech Mono'" font-size="5.5" text-anchor="middle">SHIPPING</text>
+
+          <!-- DIGIT HOME/CHARGE POSITIONS -->
+          <circle cx="192" cy="445" r="11" fill="rgba(0,200,255,0.12)" stroke="#00c8ff" stroke-width="2" class="pulse"/>
+          <text x="192" y="449" fill="#00c8ff" font-family="'Barlow Condensed'" font-weight="700" font-size="8" text-anchor="middle">D1</text>
+          <text x="192" y="463" fill="rgba(0,200,255,0.55)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">INTAKE/SORT</text>
+          <circle cx="540" cy="445" r="11" fill="rgba(0,200,255,0.12)" stroke="#00c8ff" stroke-width="2" class="pulse"/>
+          <text x="540" y="449" fill="#00c8ff" font-family="'Barlow Condensed'" font-weight="700" font-size="8" text-anchor="middle">D2</text>
+          <text x="540" y="463" fill="rgba(0,200,255,0.55)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">FORGE SORT</text>
+          <circle cx="860" cy="445" r="11" fill="rgba(0,200,255,0.12)" stroke="#00c8ff" stroke-width="2" class="pulse"/>
+          <text x="860" y="449" fill="#00c8ff" font-family="'Barlow Condensed'" font-weight="700" font-size="8" text-anchor="middle">D3</text>
+          <text x="860" y="463" fill="rgba(0,200,255,0.55)" font-family="'Share Tech Mono'" font-size="5" text-anchor="middle">QC / ASSIST</text>
+
+          <!-- DIGIT SENSOR SWEEP ARCS -->
+          <path d="M192,445 L162,415 A42,42 0 0,1 222,415 Z" fill="rgba(0,200,255,0.04)" stroke="rgba(0,200,255,0.15)" stroke-width="1"/>
+          <path d="M540,445 L510,415 A42,42 0 0,1 570,415 Z" fill="rgba(0,200,255,0.04)" stroke="rgba(0,200,255,0.15)" stroke-width="1"/>
+          <path d="M860,445 L830,415 A42,42 0 0,1 890,415 Z" fill="rgba(0,200,255,0.04)" stroke="rgba(0,200,255,0.15)" stroke-width="1"/>
+
+          <!-- GHOST ZONE LABELS -->
+          <text x="240" y="230" fill="rgba(68,136,255,0.15)" font-family="'Barlow Condensed'" font-weight="900" font-size="24" text-anchor="middle">A</text>
+          <text x="405" y="230" fill="rgba(0,200,255,0.15)" font-family="'Barlow Condensed'" font-weight="900" font-size="24" text-anchor="middle">B</text>
+          <text x="588" y="230" fill="rgba(57,255,20,0.15)" font-family="'Barlow Condensed'" font-weight="900" font-size="24" text-anchor="middle">C</text>
+          <text x="793" y="200" fill="rgba(255,107,0,0.15)" font-family="'Barlow Condensed'" font-weight="900" font-size="24" text-anchor="middle">D</text>
+          <text x="533" y="510" fill="rgba(200,150,50,0.12)" font-family="'Barlow Condensed'" font-weight="900" font-size="24" text-anchor="middle">G</text>
+
+          <!-- LAYER TITLE CARD -->
+          <rect x="170" y="492" width="710" height="110" fill="rgba(2,10,20,0.93)" stroke="rgba(57,255,20,0.4)" stroke-width="1.5" rx="4"/>
+          <!-- Title -->
+          <text x="525" y="511" fill="#39ff14" font-family="'Barlow Condensed'" font-weight="900" font-size="15" text-anchor="middle" letter-spacing="4">L5 — ROBOT NAVIGATION MESH</text>
+          <!-- Divider -->
+          <line x1="182" y1="517" x2="868" y2="517" stroke="rgba(57,255,20,0.18)" stroke-width="1"/>
+          <!-- Row 1 — highway -->
+          <rect x="182" y="523" width="9" height="8" fill="rgba(57,255,20,0.25)" stroke="#39ff14" stroke-width="1"/>
+          <text x="197" y="531" fill="rgba(57,255,20,0.8)" font-family="'Share Tech Mono'" font-size="6.5">ROBOT HIGHWAY — 3 MPH PRIMARY (E→W) · 1.5 MPH NORTH SERVICE LANE (BI-DIRECTIONAL) · CONNECTORS V1 · V2</text>
+          <!-- Row 2 — yield -->
+          <rect x="182" y="537" width="9" height="8" fill="rgba(255,215,0,0.15)" stroke="rgba(255,215,0,0.7)" stroke-width="1"/>
+          <text x="197" y="545" fill="rgba(255,215,0,0.8)" font-family="'Share Tech Mono'" font-size="6.5">YIELD ZONE — 0.5 MPH · FULL SENSOR SWEEP · HUMAN PRESENCE CHECK BEFORE CROSSING</text>
+          <!-- Row 3 — exclusion -->
+          <rect x="182" y="551" width="9" height="8" fill="rgba(255,34,68,0.15)" stroke="rgba(255,34,68,0.7)" stroke-width="1"/>
+          <text x="197" y="559" fill="rgba(255,34,68,0.8)" font-family="'Share Tech Mono'" font-size="6.5">HARD EXCLUSION — RDF-2 GANTRY (4FT BUFFER) · HAAS CNC (SPINNING TOOLS) · FURNACE (THERMAL)</text>
+          <!-- Row 4 — Omnit ROW + Digit -->
+          <rect x="182" y="565" width="9" height="8" fill="rgba(255,215,0,0.08)" stroke="rgba(255,215,0,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="197" y="573" fill="rgba(255,215,0,0.6)" font-family="'Share Tech Mono'" font-size="6.5">OMNIT R.O.W. PROJECTION — ALL ROBOTS CLEAR BEFORE SERVICE DESCENT</text>
+          <!-- Row 5 — Digit + interlock -->
+          <circle cx="187" cy="583" r="4" fill="rgba(0,200,255,0.18)" stroke="#00c8ff" stroke-width="1.5"/>
+          <text x="197" y="587" fill="rgba(0,200,255,0.8)" font-family="'Share Tech Mono'" font-size="6.5">DIGIT D1 INTAKE/SORT · D2 FORGE-SORT · D3 QC/ASSIST · YELLOW-LIGHT INTERLOCK — STAIR DOOR HOLDS ALL UNITS</text>
+          <!-- Footer -->
+          <line x1="182" y1="591" x2="868" y2="591" stroke="rgba(57,255,20,0.1)" stroke-width="1"/>
+          <text x="525" y="599" fill="rgba(57,255,20,0.3)" font-family="'Share Tech Mono'" font-size="5.5" text-anchor="middle">OZ ORCHESTRATES ALL ROUTES IN REAL-TIME · AURA VISION CONFIRMS ZONE CLEAR BEFORE DISPATCH</text>
+        </g>
+
         <!-- DIMENSIONS -->
         <line x1="163" y1="610" x2="1063" y2="610" stroke="rgba(0,200,255,0.2)" stroke-width="1"/>
         <line x1="163" y1="605" x2="163" y2="615" stroke="rgba(0,200,255,0.2)" stroke-width="1"/>
@@ -583,6 +979,9 @@
       <div class="zi" onclick="sd('shipping')"><div class="zd" style="background:rgba(160,100,255,0.9);box-shadow:0 0 5px rgba(160,100,255,0.8);"></div><div class="zn">F — SHIPPING / STAIRS</div><div class="zsf">~300 sf</div></div>
       <div class="zi" onclick="sd('assembly')"><div class="zd" style="background:rgba(200,150,50,0.8);"></div><div class="zn">G — VEHICLE ASSEMBLY</div><div class="zsf">~800 sf</div></div>
       <div class="zi" onclick="sd('mezz')"><div class="zd" style="background:transparent;border:1px dashed #ffd700;"></div><div class="zn">L2 — 360° MEZZ LOOP</div><div class="zsf">~2,400 sf</div></div>
+      <div class="zi" onclick="sd('thermal')"><div class="zd" style="background:transparent;border:1px solid #ff9900;"></div><div class="zn">L3 — THERMAL RECOVERY</div><div class="zsf">HRV · glycol · curtain</div></div>
+      <div class="zi" onclick="sd('utilities')"><div class="zd" style="background:transparent;border:1px solid #ff8800;"></div><div class="zn">L4 — UTILITIES / SPINE</div><div class="zsf">power · fiber · suppression</div></div>
+      <div class="zi" onclick="sd('robotmesh')"><div class="zd" style="background:transparent;border:1px solid #39ff14;"></div><div class="zn">L5 — ROBOT NAV MESH</div><div class="zsf">routes · exclusions · home</div></div>
     </div>
     <div class="dp" id="dp">
       <h4 id="dt" style="color:#00c8ff">SELECT A ZONE</h4>
@@ -620,14 +1019,17 @@
 
 <script>
 const Z={
-  intake:{title:'ZONE A — INTAKE',color:'#4488ff',desc:'Ground-level pads for aluminum pellet silos and ingot staging. Silos feed directly into the overhead 120 PSI pneumatic manifold. Receiving dock on the south wall. Material enters here and moves right through the Linear Kernel.',equipment:['AL Pellet Silo 1 (500lb)','AL Pellet Silo 2 (500lb)','Ingot Staging Area','Receiving Dock','Pneumatic Manifold Feed Connections','Overhead Utility Tie-In','Dedicated Exhaust + Dry Suppression (Pellet Handling per zone)'],budget:'(included in build-out)'},
+  intake:{title:'ZONE A — INTAKE',color:'#4488ff',desc:'Ground-level pads for aluminum pellet silos and ingot staging. Silos feed directly into the overhead 120 PSI pneumatic manifold. Receiving dock on the south wall. Material enters here and moves right through the Linear Kernel. NFPA 484 COMPLIANCE: combustible metal (aluminum dust, magnesium alloy) requires Class D dry-suppression only — water and clean-agent systems are prohibited in this zone.',equipment:['AL Pellet Silo 1 (500lb)','AL Pellet Silo 2 (500lb)','Ingot Staging Area','Receiving Dock','Pneumatic Manifold Feed Connections','Overhead Utility Tie-In','Class D Dry Suppression — NFPA 484 (NO water / NO Novec in this zone)','Dedicated Exhaust (Combustible Dust per zone)'],budget:'(included in build-out)'},
   rdf2:{title:'ZONE B — RDF-2 OCTO-NEXUS',color:'#00c8ff',desc:'The Physical Compiler. 8-head synchronous gantry with 10ft operational envelope driven by NVIDIA Blackwell real-time physics simulation. Zero-latency Script switching. Material feeds from overhead pneumatic manifold. 3ft rail buffer above for Omnit service access.',equipment:['8-Head Synchronous Gantry','NVIDIA Blackwell EI Physics','12-16 kg/hr Throughput','CF-Nylon / Aluminum Composites','160 sq ft Machine Footprint','Overhead Pneumatic Feed','Fiber → OZ Node Link'],budget:'$4,000,000'},
   miniforge:{title:'ZONE C — MINI-FORGE BANK',color:'#39ff14',desc:'40-pod modular rack aligned directly under mezzanine overhang for top-down servicing by Omnit rail. Pneumatic central feed from overhead manifold. Digit EI sorting. Scale up: splice into the pipe and bolt a new pod to the rack in 48 hours.',equipment:['40 Print Pods (CoreXY) on 8040 Rack','500lb Pneumatic Pellet Tank','Overhead Solenoid Manifold (120 PSI)','Digit Humanoid Sorter','Stainless Belt Conveyor → Assembly','Centralized Collection Trough','Aura Vision Parts ID','Top-Down Omnit Service Access'],budget:'$280,000–$420,000'},
-  machineshop:{title:'ZONE D — HAAS HUB',color:'#ff6b00',desc:'Dedicated vibration isolation slab joint surrounds this zone. Kinetic energy from CNC operations cannot transfer to RDF-2 or Mini-Forge precision sensors. Haas VF-4SS tool changers operate within the 10ft ground floor clearance. PLC cabinet links to Oz orchestration layer via fiber.',equipment:['Haas VF-4SS VMC (4th Axis, ATC 24+1)','Haas ST-25Y CNC Lathe','Universal Gear Hobber','CNC Mandrel Tube Bender','Atmosphere Furnace (Carburizing)','Automated Quench Tank (Auto Lift)','Vibratory Tumbler','SMT Pick-and-Place','Reflow Oven','Robotic Wheel Lacing','PLC Cabinet → Oz Fiber Link','Vibration Isolation Slab Perimeter','Dedicated Exhaust + Wet/Dry Suppression (Furnace/Quench per zone)'],budget:'$1,650,000–$2,050,000'},
+  machineshop:{title:'ZONE D — HAAS HUB',color:'#ff6b00',desc:'Dedicated vibration isolation slab joint surrounds this zone. Kinetic energy from CNC operations cannot transfer to RDF-2 or Mini-Forge precision sensors. Haas VF-4SS tool changers operate within the 10ft ground floor clearance. PLC cabinet links to Oz orchestration layer via fiber. NFPA 484 COMPLIANCE: furnace and quench zones require Class D dry-suppression — water and Novec prohibited at metal fire sources.',equipment:['Haas VF-4SS VMC (4th Axis, ATC 24+1)','Haas ST-25Y CNC Lathe','Universal Gear Hobber','CNC Mandrel Tube Bender','Atmosphere Furnace (Carburizing)','Automated Quench Tank (Auto Lift)','Vibratory Tumbler','SMT Pick-and-Place','Reflow Oven','Robotic Wheel Lacing','PLC Cabinet → Oz Fiber Link','Vibration Isolation Slab Perimeter','Class D Dry Suppression — Furnace/Quench (NFPA 484)','Dedicated Exhaust + Wet Suppression — SMT/non-metal zones'],budget:'$1,650,000–$2,050,000'},
   energy:{title:'ZONE E — ENERGY + OZ NODE',color:'#ff2244',desc:'Nodes never go dark. 480V 3-phase bus duct runs overhead parallel to mezzanine loop powering all zones. Oz monitors grid state, battery level, and smart load shedding. Prioritizes RDF-2 and CNC over lights. 0.5-year payback on solar.',equipment:['75kW Rooftop Solar (188 panels)','225kWh Battery Bank','16-17 Tesla Powerwall 3','480V 3-Phase Main Panel','Overhead Bus Duct Distribution','Oz Grid State Monitor','Industrial HVAC + Exhaust','Clean Agent Suppression (Novec 1230)'],budget:'$180,000–$215,000'},
-  shipping:{title:'ZONE F — SHIPPING + MEZZANINE STAIR',color:'rgba(160,100,255,0.9)',desc:'Far right per Linear Kernel spec. Output exits here. Direct stair access from the mezzanine Battle Pair command deck. Operator can walk from server room to shipping floor in 30 seconds. Roll-up door for vehicle-scale deliveries.',equipment:['Roll-Up Shipping Door (12ft clearance)','Packing Station','Vehicle Staging Area','Direct Stair — Mezzanine Command Deck','Freight Scale','QC Inspection Station'],budget:'(included in build-out)'},
-  assembly:{title:'ZONE G — VEHICLE ASSEMBLY',color:'rgba(200,150,50,0.85)',desc:'Early revenue wedge — core is the mesh, not vehicles. Three assembly bays spanning the full width of the south floor. Parts arrive from Mini-Forge conveyor and Haas Hub. First vehicles: SP50 and SP100. Bay 3 configurable for larger platforms including VTOL integration.',equipment:['Assembly Bay 1','Assembly Bay 2','Assembly Bay 3 (VTOL-configurable)','Parts Flow Conveyor Inlet','Overhead Crane Rough-In','Vehicle QC / Final Inspection'],budget:'(included in build-out)'},
-  mezz:{title:'L2 — 360° MEZZANINE LOOP',color:'#ffd700',desc:'360° Omnit rail runs the full perimeter of the mezzanine. Carriers service any point on the production floor from above — top-down access to Mini-Forge pods without stopping production. Battle Pair command hub has direct sightlines to all zones. 8ft OSHA-compliant headroom on upper deck.',equipment:['360° Omnit Rail (Perimeter Loop)','Omnit Service Carriers','Battle Pair Command Hub (2x Operator Stations)','Aura Dashboard + Oz Monitor','NVIDIA Blackwell Server Room','Raised Floor + ESD Protection','Precision HVAC + Clean Agent Suppression (Novec 1230)','Fiber Conduit → Ground PLCs','Tool Storage + Fixturing Room','Loft / Overflow Expansion Space','Direct Stair → Shipping Zone F'],budget:'(included in construction)'}
+  shipping:{title:'ZONE F — SHIPPING + MEZZANINE STAIR',color:'rgba(160,100,255,0.9)',desc:'Far right per Linear Kernel spec. Output exits here. Direct stair access from the mezzanine Battle Pair command deck. Operator can walk from server room to shipping floor in 30 seconds. YELLOW-LIGHT INTERLOCK: mezzanine-to-shipping door triggers robot traffic pause — ground-level Digit and forklift units hold in buffer zone until door closes. Zero kinetic interference protocol.',equipment:['Roll-Up Shipping Door x2 (12ft clearance each)','Packing Station','Vehicle Staging Area','Direct Stair — Mezzanine Command Deck','Freight Scale','QC Inspection Station','Yellow-Light Interlock (door-triggered robot pause)','Human-Machine Exclusion Zone (permanent safety cage at stair base)'],budget:'(included in build-out)'},
+  assembly:{title:'ZONE G — VEHICLE ASSEMBLY',color:'rgba(200,150,50,0.85)',desc:'Early revenue wedge — core is the mesh, not vehicles. Zone G is a Complex Assembly Stress-Test for the Sovereign Protocol. The V4 Mustang and SP-series builds are not car projects — they are high-complexity, multi-material assembly sequences that prove the mesh can coordinate across Zones B, C, D simultaneously under real load. What ships is a vehicle. What is being tested is the entire Node Zero operating logic.',equipment:['Assembly Bay 1','Assembly Bay 2','Assembly Bay 3 (VTOL-configurable)','Parts Flow Conveyor Inlet','Overhead Crane Rough-In','Vehicle QC / Final Inspection'],budget:'(included in build-out)'},
+  mezz:{title:'L2 — 360° MEZZANINE LOOP',color:'#ffd700',desc:'360° Omnit rail runs the full perimeter of the mezzanine. Carriers service any point on the production floor from above — top-down access to Mini-Forge pods without stopping production. Battle Pair command hub has direct sightlines to all zones. 8ft OSHA-compliant headroom on upper deck.',equipment:['360° Omnit Rail (Perimeter Loop)','Omnit Service Carriers','Battle Pair Command Hub (2x Operator Stations)','Aura Dashboard + Oz Monitor','NVIDIA Blackwell Server Room','Raised Floor + ESD Protection','Precision HVAC + Clean Agent Suppression (Novec 1230)','Fiber Conduit → Ground PLCs','Tool Storage + Fixturing Room','Loft / Overflow Expansion Space','Direct Stair → Shipping Zone F'],budget:'(included in construction)'},
+  thermal:{title:'L3 — THERMAL ARCHITECTURE',color:'#ff9900',desc:'Integrated heat recovery system captures waste thermal energy from the Atmosphere Furnace (1,500°F+), Quench Tank, and NVIDIA Blackwell server racks. A closed-loop glycol system routes captured heat through the Utility Column spine to the HRV unit. Winter mode pipes heat to the Battle Pair command hub — up to 40% HVAC reduction. Summer mode reverses to active rejection through the North Wall exhaust stack.',equipment:['Thermal Hood — Atmo Furnace (1,500°F+ capture)','Thermal Hood — Quench Tank','Blackwell Rear-Door Heat Exchanger (RDHx)','Closed-Loop Glycol Distribution System','Utility Column (480V · Novec · Fiber · Glycol spine)','HRV Unit — Seasonal Mode Switch','North Wall Industrial Exhaust Stack (Summer)','Battle Pair Passive Heat Distribution (Winter)','Air Curtain — High-Velocity Dirty/Clean Barrier','Evaporative Cooling Mode (Summer → RDF-2 + SMT)'],budget:'Est. $85,000–$120,000 installed'},
+  utilities:{title:'L4 — UTILITIES / SPINE',color:'#ff8800',desc:'All five utility systems route through the Utility Column spine at x=791 — a single vertical chase that eliminates redundant runs and cuts average cable/pipe lengths by ~40%. 480V 3-phase bus duct feeds every zone from the Zone E main panel. 120 PSI pneumatic manifold runs from the silos to RDF-2 and all 40 Mini-Forge pods. Single-mode fiber backbone connects the server room to every zone PLC under Oz orchestration. Novec 1230 suppression line branches to protected zones — Class D dry suppression only at metal fire sources. Grounding grid and ESD zones protect precision equipment.',equipment:['480V 3Φ Bus Duct — Zone E → all zones (60A–400A sub-panels)','120 PSI Pneumatic Manifold — Silos → RDF-2 + 40 Forge Pods','Single-Mode Fiber Backbone — Server Room → PLCs A–E (Oz)','Novec 1230 Main Line — Panel → Server Rm + RDF-2','CLASS D DRY SUPPRESSION ONLY — Haas Hub furnace/quench zones (NFPA 484)','Grounding Grid — Haas Isolation Slab (#4 bare copper, Ufer bond, 10ft grid)','ESD Conductive Flooring — RDF-2 / Zone B','E-Stop E1 — Zone A Entry','E-Stop E2 — B/C Junction','E-Stop E3 — Utility Column / Haas','E-Stop E4 — Zone F Exit (all systems halt)','Utility Column Spine — All 5 systems, single chase @ x=791'],budget:'Included in build-out · ~40% run-length savings vs distributed routing'},
+  robotmesh:{title:'L5 — ROBOT NAVIGATION MESH',color:'#39ff14',desc:'Oz orchestrates all Digit routes in real-time. Aura vision confirms every zone clear before dispatch. Primary east-west highway runs at 3 mph from Intake to Shipping. North service lane is bi-directional at 1.5 mph. Three vertical connector lanes (V1, V2, and south pass-through) link levels. Exclusion zones lock out Digit access during active CNC, gantry print ops, and thermal hazard events. Yield thresholds require full sensor sweep and human presence check before crossing. Yellow-Light Interlock holds all ground robots the moment the mezzanine stair door opens.',equipment:['Primary E-W Highway — 3 MPH (Intake → Shipping)','North Service Lane — 1.5 MPH bi-directional','Vertical Connectors V1 (Zone A) · V2 (Mini-Forge) · V3 (South)','HARD EXCLUSION — RDF-2 Gantry (4ft buffer, no access during print)','HARD EXCLUSION — Haas CNC (spinning tools) + Furnace (thermal)','YIELD ZONE — Intake dock approach','YIELD ZONE — Conveyor crossing (Zone C)','YIELD THRESHOLD — Full assembly bay entry (Zone G)','YIELD ZONE — Shipping approach (Zone F)','Digit D1 — Intake/Sort (Home: Zone A/G corner)','Digit D2 — Forge Sort (Home: Zone C/G corner)','Digit D3 — QC/Assist (Home: Zone G/F corner)','Omnit Rail R.O.W. — robots clear before service descent','Yellow-Light Interlock — all ground units hold on stair door open'],budget:'Oz + Aura vision infrastructure — included in EI/software budget'}
 };
 
 function sd(z){const d=Z[z];if(!d)return;document.getElementById('dt').style.color=d.color;document.getElementById('dt').textContent=d.title;const dd=document.getElementById('dd');dd.style.color='rgba(200,220,230,0.7)';dd.style.fontFamily='Barlow,sans-serif';dd.style.fontSize='10px';dd.textContent=d.desc;document.getElementById('deq').innerHTML=d.equipment.map(e=>`<div class="eqi">${e}</div>`).join('');document.getElementById('dbud').innerHTML=`<div class="budline" style="border-color:${d.color}"><div class="blbl">BUDGET</div><div class="amt" style="color:${d.color}">${d.budget}</div></div>`;}
@@ -643,8 +1045,20 @@ function showLevel(l,btn){
   document.querySelectorAll('.level-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   const m=document.getElementById('mezz');
+  const t=document.getElementById('thermal');
+  const u=document.getElementById('utilities');
+  const r=document.getElementById('robotmesh');
+  [t,u,r].forEach(x=>{if(x)x.style.display='none';});
+  m.classList.remove('on');
   if(l==='mezz'){m.classList.add('on','fi');}
-  else{m.classList.remove('on');}
+  else if(l==='thermal'){t.style.display='block';t.classList.add('fi');}
+  else if(l==='utilities'){u.style.display='block';u.classList.add('fi');}
+  else if(l==='robotmesh'){r.style.display='block';r.classList.add('fi');}
+}
+
+function toggleExpand(btn){
+  const expanded=document.body.classList.toggle('expanded');
+  btn.textContent=expanded?'⤡ SIDEBAR':'⤢ EXPAND';
 }
 
 sd('rdf2');
